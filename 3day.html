@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 三日之后</title>
+    <style>
+        /* 全局重置 - 全黑背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        /* 文字游戏容器 (类似老式终端) */
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 标题 - 仿老式文字冒险 */
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        /* 故事文本 */
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #6a3a3a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        /* 选项区域 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 4px;
+        }
+
+        /* 蓝色选项 (仿老式超链接) */
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 20px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        /* 闪烁光标 (装饰) */
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* 老式终端提示 */
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        /* 自适应 */
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 16px;
+                padding: 5px 16px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 黑水村 · 三日之后 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 三天后 · 黑水村村口 ]</span>
+        </p>
+        <p>
+            秋心和他的表哥 <span class="name">宁无为</span> 终于来到了黑水村。
+            村口的老槐树在风中发出沙沙的声响，像是低语，又像是警告。
+        </p>
+        <p>
+            两人在村口见到了两位青年——<span class="name">达齐先生</span> 和 <span class="name">麦咖先生</span>。
+            他们穿着朴素，笑容热情，但眼神深处似乎藏着什么。
+        </p>
+        <p>
+            <span class="name">宁无为</span> 上前一步，微笑着说道：
+            <span style="color:#8a8a6a;">“我们是测评博主，专程来测评你们农家乐的，听说这里的走地鸡和鳝鱼都是一绝。”</span>
+        </p>
+        <p>
+            达齐和麦咖闻言，眼中闪过一丝光亮，连忙热情地邀请两人进村住宿。
+            <span style="color:#6a5a4a;">“来来来，屋里请，我们早就准备好了上房！”</span>
+        </p>
+        <p>
+            <span class="evil">……只不过，这村子安静得有些过分了。</span><br>
+            空气中弥漫着一股说不清道不明的气息，像是泥土，又像是别的什么东西。
+            秋心下意识地握紧了背包带子，总觉得有什么地方不对劲。
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:8px;">
+            —— 不祥的预感，如同夜色一般，悄无声息地蔓延开来。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <a class="choice-link" id="enterBtn">➤ 进入村子</a>
+    </div>
+
+    <!-- 终端提示 (装饰) -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const enterBtn = document.getElementById('enterBtn');
+
+        // 点击“进入村子” → 跳转 cunzi.html
+        enterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // 添加一点点击反馈 (视觉)
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'cunzi.html';
+            }, 200);
+        });
+
+        // 键盘 Enter 触发 (辅助)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                enterBtn.click();
+            }
+        });
+
+        // 双击标题可重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🌑 3day.html 加载完成');
+        console.log('👥 秋心 & 宁无为 抵达黑水村');
+        console.log('🔵 选项: 进入村子 → cunzi.html');
+    })();
+</script>
+</body>
+</html>
