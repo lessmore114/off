@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 真相</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .tense {
+            color: #8a6a4a;
+            font-weight: bold;
+        }
+
+        .story-text .dialogue {
+            color: #a0a08a;
+        }
+
+        .story-text .shout {
+            color: #aa4a3a;
+            font-weight: bold;
+        }
+
+        .story-text .panic {
+            color: #8a7a3a;
+            font-weight: bold;
+        }
+
+        .story-text .reveal {
+            color: #6a8a6a;
+            font-weight: bold;
+        }
+
+        .story-text .suspense {
+            color: #8a6a4a;
+            font-style: italic;
+        }
+
+        /* 选项区域 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 28px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 6px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 16px;
+                padding: 5px 18px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 黑水村 · 真相大白 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 后山 · 空地 ]</span>
+        </p>
+        <p>
+            秋心最终还是追上了达齐和麦咖。消防斧在月光下泛着寒光，
+            两人瘫坐在地上，气喘吁吁，面具早就不知道丢到哪里去了。
+        </p>
+        <p>
+            <span class="panic">“等等！别！别！不要！”</span>
+        </p>
+        <p>
+            <span class="panic">“我们什么都告诉你！别杀我们！这不值得！”</span>
+        </p>
+        <p>
+            <span class="panic">“冷静！冷静好吗？”</span>
+        </p>
+        <p>
+            就在这时，<span class="name">宁无为</span> 也气喘吁吁地赶到了现场，
+            看到眼前这一幕，他先是一愣，随即皱起了眉头。
+        </p>
+        <p>
+            <span class="dim">“到底怎么回事？”</span>
+        </p>
+        <p>
+            达齐和麦咖对视了一眼，最终低下了头。
+        </p>
+        <p>
+            <span class="reveal">达齐长叹一口气，开始交代——</span>
+        </p>
+        <p>
+            “我有个点子……就是假装这个村子闹鬼，
+            让那些好奇的人过来，贡献住宿的伙食费和住宿费……”
+        </p>
+        <p>
+            他越说声音越小，而麦咖在一旁不停地点头附和。
+        </p>
+        <p>
+            <span class="tense">“只不过，这都不是最重要的……”</span>
+        </p>
+        <p>
+            <span class="name">宁无为</span> 的目光骤然变得锐利：
+        </p>
+        <p>
+            <span class="dialogue">“最重要的是——我朋友去哪了？”</span>
+        </p>
+        <p>
+            空气仿佛凝固了。
+        </p>
+        <p>
+            达齐和麦咖两人支支吾吾，眼神躲闪，<span class="suspense">半天没说出一句话来</span>。
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 闹鬼的假象背后，似乎还藏着更深的秘密。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <a class="choice-link" id="nextBtn"><span class="arrow">➤</span> 继续</a>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const nextBtn = document.getElementById('nextBtn');
+
+        // 点击“继续” → 跳转 Real2.html
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'Real2.html';
+            }, 200);
+        });
+
+        // 键盘 Enter 触发
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                nextBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🔍 Real.html 加载完成 · 真相大白');
+        console.log('😰 达齐和麦咖坦白闹鬼骗局');
+        console.log('❓ 但关于宁无为朋友的下落，两人支支吾吾');
+        console.log('🔵 选项: 继续 → Real2.html');
+        console.log('⌨️ 快捷键: [Enter] 或 [Space]');
+    })();
+</script>
+</body>
+</html>

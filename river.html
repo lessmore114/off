@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 河边</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .stench {
+            color: #6a8a5a;
+        }
+
+        .story-text .whisper {
+            color: #4a6a6a;
+            font-style: italic;
+        }
+
+        .story-text .burn {
+            color: #8a5a3a;
+            font-weight: bold;
+        }
+
+        /* 选项区域 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 20px;
+            width: 100%;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 5px 16px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+            white-space: nowrap;
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 4px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 14px;
+                padding: 4px 12px;
+                white-space: normal;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+            .choice-grid {
+                gap: 8px 12px;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 黑水村 · 河边 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 黑水村 · 河边 ]</span>
+        </p>
+        <p>
+            秋心和表哥沿着村道来到河边。这里看起来跟平常的河边没什么两样——
+            流水潺潺，岸边长满了杂草，几棵歪脖子柳树垂在水面上。
+        </p>
+        <p>
+            但两人几乎同时皱起了眉头。
+        </p>
+        <p>
+            <span class="stench">有一股奇怪的味道。</span>
+            不是腐烂，也不是泥土，而是一种......<span class="evil">说不清的腥甜</span>，若有若无地混杂在空气里。
+        </p>
+        <p>
+            而河水的颜色，在灰蒙蒙的天光下泛着一种<span class="evil">异样的浑浊</span>，
+            似乎比普通的河水要深上许多，像是掺了什么不该有的东西。
+        </p>
+        <p>
+            <span class="burn">地上，有一片被焚烧过的痕迹。</span>
+            黑色的灰烬散落在岸边的碎石间，隐约能看出是一些衣物碎片，
+            边缘烧得卷曲，散发着焦糊的气味。
+        </p>
+        <p>
+            <span class="dim">“这里没什么其他的东西了，先走吧。”</span>
+            表哥低声说道，目光却还在那片灰烬上停留了片刻。
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 河水流淌不息，带走的却不仅仅是时间。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 接下来去哪里？ ◆</span>
+        <div class="choice-grid">
+            <a class="choice-link" id="observeBtn"><span class="arrow">◈</span> 在这里观察整个村子</a>
+            <a class="choice-link" id="roomBtn"><span class="arrow">↗</span> 去达齐的房间</a>
+        </div>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 选择你的方向...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const observeBtn = document.getElementById('observeBtn');
+        const roomBtn = document.getElementById('roomBtn');
+
+        // 在这里观察整个村子 → cunzi3.html
+        observeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'cunzi3.html';
+            }, 200);
+        });
+
+        // 去达齐的房间 → daqi.html
+        roomBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'daqi.html';
+            }, 200);
+        });
+
+        // 键盘快捷键 (1, 2)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') {
+                e.preventDefault();
+                observeBtn.click();
+            } else if (e.key === '2') {
+                e.preventDefault();
+                roomBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🌊 river.html 加载完成 · 河边');
+        console.log('👃 奇怪的味道 + 异样的河水 + 焚烧痕迹');
+        console.log('🔵 选项1: 在这里观察整个村子 → cunzi3.html');
+        console.log('🔵 选项2: 去达齐的房间 → daqi.html');
+        console.log('⌨️ 快捷键: [1] 观察 [2] 达齐房间');
+    })();
+</script>
+</body>
+</html>

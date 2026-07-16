@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>店内 · 成吉思鸡与诡异邀请</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #e8e6e3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 100%;
+            max-width: 380px;
+            min-height: 700px;
+            background: #f7f5f2;
+            border-radius: 38px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.30);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .status-bar {
+            padding: 10px 18px 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e1e1e;
+            background: #f7f5f2;
+            flex-shrink: 0;
+        }
+
+        .scene-header {
+            padding: 8px 16px 12px;
+            background: #f7f5f2;
+            border-bottom: 1px solid #ddd8d0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            font-weight: 300;
+            color: #555;
+            cursor: default;
+            line-height: 1;
+        }
+
+        .scene-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-right: 24px;
+            letter-spacing: 0.5px;
+            color: #3a2c1b;
+        }
+        .scene-title small {
+            font-size: 11px;
+            font-weight: 400;
+            color: #8a7a66;
+        }
+
+        .story-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: #f7f5f2;
+        }
+
+        /* 叙事/旁白 */
+        .narrative {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #2c241a;
+            background: #f0ede8;
+            padding: 14px 18px;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            animation: fadeUp 0.3s ease-out;
+            border-left: 3px solid #b8a692;
+        }
+
+        /* 对话气泡 */
+        .dialogue {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 92%;
+            animation: fadeUp 0.3s ease-out;
+        }
+        .dialogue.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: #ccc;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .avatar-sm img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .bubble {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .dialogue.right .bubble {
+            background: #b2e281;
+            border-top-right-radius: 4px;
+            color: #1a1a1a;
+        }
+        .dialogue:not(.right) .bubble {
+            background: #ffffff;
+            border-top-left-radius: 4px;
+            color: #1a1a1a;
+        }
+
+        /* 动作/描述 */
+        .action-tip {
+            font-size: 13px;
+            color: #7a6b5a;
+            font-style: italic;
+            padding: 0 6px 2px 6px;
+            text-align: center;
+            animation: fadeUp 0.3s ease-out;
+        }
+
+        /* 底部选项区域 */
+        .bottom-area {
+            padding: 12px 16px 8px;
+            background: #f7f5f2;
+            border-top: 1px solid #e0dad2;
+            text-align: center;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            display: inline-block;
+            background: #c7a86b;
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(199, 168, 107, 0.25);
+            cursor: pointer;
+            transition: 0.2s;
+            opacity: 0.5;
+            pointer-events: none;
+            letter-spacing: 0.8px;
+            width: 80%;
+            margin: 0 auto;
+        }
+        .choice-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .choice-btn:active {
+            transform: scale(0.94);
+        }
+        .choice-btn.no {
+            background: #9a8b7a;
+            box-shadow: 0 4px 10px rgba(154, 139, 122, 0.25);
+        }
+        .choice-btn.yes {
+            background: #b88a4b;
+            box-shadow: 0 4px 10px rgba(184, 138, 75, 0.3);
+        }
+
+        .choice-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-container::-webkit-scrollbar {
+            width: 3px;
+        }
+        .story-container::-webkit-scrollbar-thumb {
+            background: #c5b9aa;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>🔋 100%</span>
+    </div>
+    <!-- 标题 -->
+    <div class="scene-header">
+        <span class="back-btn">‹</span>
+        <div class="scene-title">成吉思鸡 · 诡异邀请</div>
+        <span style="font-size:18px; opacity:0.5;">⋯</span>
+    </div>
+
+    <!-- 故事区域 -->
+    <div class="story-container" id="storyContainer"></div>
+
+    <!-- 底部选项 (初始隐藏) -->
+    <div class="bottom-area" id="bottomArea" style="display:none;">
+        <div class="choice-group">
+            <button class="choice-btn yes" id="choiceYes">🐔 去！</button>
+            <button class="choice-btn no" id="choiceNo">😰 不去...</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 头像 -----
+        const AVATAR_SINNER = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEW_WRqUUYnETMRAAHJJ9QZ7FC_UHsIoIkAAg8vAAILw4hWaSBW0drSGjo8BA.jpg';
+        const AVATAR_LOVELESS = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXO41qVxZKVP0bOyfKK2CMia-kLsMw8gACBisAAkvwuVbF8wxCbK6awD0E.jpg';
+
+        // ----- 场景数据 (按顺序) -----
+        const scenes = [
+            { type: 'narrative', text: '一会后，秋心便和他的表哥一边吃着成吉思鸡，一边聊天。' },
+            { type: 'dialogue', sender: 'sinner', text: '我去表哥，你这鸡搞这么猛的啊，你果然是超级大鸡佬' },
+            { type: 'dialogue', sender: 'loveless', text: '对了啊，表弟，你怕鬼吗？' },
+            { type: 'dialogue', sender: 'sinner', text: '表哥，你不会要带我去盗墓吧？' },
+            { type: 'dialogue', sender: 'loveless', text: '......' },
+            { type: 'dialogue', sender: 'loveless', text: '其实是我一个朋友在一个村子离奇失踪了，所以......你懂的。' },
+            { type: 'action', text: '宁无为想宣传一下自己的“正宗印度成吉思鸡”，顺便找到自己的朋友。' },
+            { type: 'dialogue', sender: 'sinner', text: '等等表哥，你难道没看过那种恐怖电影吗......这种村子一般都十分的诡异啊。' },
+            { type: 'dialogue', sender: 'loveless', text: '行吧，你决定吧，你去我也去，我又不逼你去。' }
+        ];
+
+        const container = document.getElementById('storyContainer');
+        const bottomArea = document.getElementById('bottomArea');
+        const choiceYes = document.getElementById('choiceYes');
+        const choiceNo = document.getElementById('choiceNo');
+
+        let currentIdx = 0;
+        let isComplete = false;
+        let timer = null;
+
+        // ----- 构建场景元素 -----
+        function buildSceneItem(scene) {
+            const frag = document.createElement('div');
+
+            if (scene.type === 'narrative') {
+                const p = document.createElement('div');
+                p.className = 'narrative';
+                p.textContent = scene.text;
+                frag.appendChild(p);
+            } 
+            else if (scene.type === 'dialogue') {
+                const row = document.createElement('div');
+                row.className = 'dialogue';
+                const isSinner = (scene.sender === 'sinner');
+                if (isSinner) row.classList.add('right');
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar-sm';
+                const img = document.createElement('img');
+                img.src = isSinner ? AVATAR_SINNER : AVATAR_LOVELESS;
+                img.alt = isSinner ? '秋心' : '宁无为';
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.textContent = isSinner ? '秋' : '宁';
+                    fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:600;font-size:15px;background:#e0d6c8;color:#3a2c1b;';
+                    avatarDiv.appendChild(fallback);
+                };
+                avatarDiv.appendChild(img);
+
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = scene.text;
+
+                row.appendChild(avatarDiv);
+                row.appendChild(bubble);
+                frag.appendChild(row);
+            }
+            else if (scene.type === 'action') {
+                const action = document.createElement('div');
+                action.className = 'action-tip';
+                action.textContent = scene.text;
+                frag.appendChild(action);
+            }
+
+            return frag;
+        }
+
+        // ----- 显示下一条 (点击触发) -----
+        function showNext() {
+            if (isComplete || timer) return;
+            if (currentIdx >= scenes.length) {
+                // 所有内容显示完毕，显示选项
+                isComplete = true;
+                bottomArea.style.display = 'flex';
+                // 激活按钮
+                choiceYes.classList.add('active');
+                choiceNo.classList.add('active');
+                return;
+            }
+
+            const scene = scenes[currentIdx];
+            const el = buildSceneItem(scene);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < scenes.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 280);
+            } else {
+                // 最后一条显示后，延迟显示选项
+                setTimeout(() => {
+                    isComplete = true;
+                    bottomArea.style.display = 'flex';
+                    choiceYes.classList.add('active');
+                    choiceNo.classList.add('active');
+                }, 500);
+            }
+        }
+
+        // ----- 点击容器触发下一条 -----
+        container.addEventListener('click', function(e) {
+            if (isComplete) return;
+            showNext();
+        });
+
+        // ----- 选项事件 -----
+        choiceYes.addEventListener('click', function() {
+            if (!this.classList.contains('active')) return;
+            window.location.href = 'shop3.html';
+        });
+
+        choiceNo.addEventListener('click', function() {
+            if (!this.classList.contains('active')) return;
+            window.location.href = 'Theend1.html';
+        });
+
+        // ----- 初始化：自动显示第一条 -----
+        function initStory() {
+            container.innerHTML = '';
+            currentIdx = 0;
+            isComplete = false;
+            bottomArea.style.display = 'none';
+            choiceYes.classList.remove('active');
+            choiceNo.classList.remove('active');
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            // 自动显示第一条
+            setTimeout(() => {
+                if (scenes.length > 0) {
+                    const first = scenes[0];
+                    const el = buildSceneItem(first);
+                    container.appendChild(el);
+                    currentIdx = 1;
+                    container.scrollTop = container.scrollHeight;
+                    if (currentIdx >= scenes.length) {
+                        isComplete = true;
+                        bottomArea.style.display = 'flex';
+                        choiceYes.classList.add('active');
+                        choiceNo.classList.add('active');
+                    }
+                }
+            }, 200);
+        }
+
+        // 覆盖 showNext 适配从第二条开始
+        const originalShowNext = showNext;
+        showNext = function() {
+            if (isComplete || timer) return;
+            if (currentIdx >= scenes.length) {
+                isComplete = true;
+                bottomArea.style.display = 'flex';
+                choiceYes.classList.add('active');
+                choiceNo.classList.add('active');
+                return;
+            }
+            const scene = scenes[currentIdx];
+            const el = buildSceneItem(scene);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < scenes.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 280);
+            } else {
+                setTimeout(() => {
+                    isComplete = true;
+                    bottomArea.style.display = 'flex';
+                    choiceYes.classList.add('active');
+                    choiceNo.classList.add('active');
+                }, 500);
+            }
+        };
+
+        // 重新绑定点击事件
+        container.removeEventListener('click', showNext);
+        container.addEventListener('click', function(e) {
+            if (isComplete) return;
+            showNext();
+        });
+
+        initStory();
+
+        // 双击重置 (调试)
+        container.addEventListener('dblclick', function() {
+            if (confirm('重置场景？')) {
+                initStory();
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>采购 · 装备与线索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #d6d8db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 100%;
+            max-width: 380px;
+            min-height: 700px;
+            background: #f7f5f2;
+            border-radius: 38px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.30);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .status-bar {
+            padding: 10px 18px 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e1e1e;
+            background: #f7f5f2;
+            flex-shrink: 0;
+        }
+
+        .scene-header {
+            padding: 8px 16px 12px;
+            background: #f7f5f2;
+            border-bottom: 1px solid #ddd8d0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            font-weight: 300;
+            color: #555;
+            cursor: default;
+            line-height: 1;
+        }
+
+        .scene-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-right: 24px;
+            letter-spacing: 0.5px;
+            color: #3a2c1b;
+        }
+        .scene-title small {
+            font-size: 11px;
+            font-weight: 400;
+            color: #8a7a66;
+        }
+
+        .story-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: #f7f5f2;
+        }
+
+        /* 叙事/旁白 */
+        .narrative {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #2c241a;
+            background: #f0ede8;
+            padding: 14px 18px;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            animation: fadeUp 0.3s ease-out;
+            border-left: 3px solid #b8a692;
+        }
+
+        /* 对话气泡 */
+        .dialogue {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 92%;
+            animation: fadeUp 0.3s ease-out;
+        }
+        .dialogue.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: #ccc;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .avatar-sm img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .bubble {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .dialogue.right .bubble {
+            background: #b2e281;
+            border-top-right-radius: 4px;
+            color: #1a1a1a;
+        }
+        .dialogue:not(.right) .bubble {
+            background: #ffffff;
+            border-top-left-radius: 4px;
+            color: #1a1a1a;
+        }
+
+        /* 动作/描述 */
+        .action-tip {
+            font-size: 13px;
+            color: #7a6b5a;
+            font-style: italic;
+            padding: 0 6px 2px 6px;
+            text-align: center;
+            animation: fadeUp 0.3s ease-out;
+        }
+
+        /* 特殊：网址按钮（仿聊天中的链接） */
+        .link-bubble {
+            display: inline-block;
+            background: #eef3f7 !important;
+            border: 1.5px solid #6a9ec7;
+            color: #1a5a8c !important;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            text-decoration: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            font-size: 15px;
+        }
+        .link-bubble:active {
+            transform: scale(0.94);
+            background: #dce6ef;
+        }
+        .link-bubble::before {
+            content: "🔗 ";
+            font-size: 14px;
+        }
+
+        .dialogue .bubble .link-bubble {
+            /* 包裹在气泡内时，去除额外边距 */
+            margin: -2px 0;
+        }
+
+        /* 装备标签（小装饰） */
+        .gear-tag {
+            display: inline-block;
+            background: #dacfc0;
+            color: #3d2f1e;
+            font-size: 12px;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-container::-webkit-scrollbar {
+            width: 3px;
+        }
+        .story-container::-webkit-scrollbar-thumb {
+            background: #c5b9aa;
+            border-radius: 10px;
+        }
+
+        /* 底部按钮 (本场景无，但保留占位) */
+        .bottom-area {
+            padding: 8px 16px 8px;
+            background: #f7f5f2;
+            border-top: 1px solid #e0dad2;
+            text-align: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            color: #a0907e;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>🔋 100%</span>
+    </div>
+    <!-- 标题 -->
+    <div class="scene-header">
+        <span class="back-btn">‹</span>
+        <div class="scene-title">采购 · 装备与线索</div>
+        <span style="font-size:18px; opacity:0.5;">⋯</span>
+    </div>
+
+    <!-- 故事区域 -->
+    <div class="story-container" id="storyContainer"></div>
+
+    <!-- 底部提示 -->
+    <div class="bottom-area">
+        <span>💡 点击网址跳转论坛</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 头像 -----
+        const AVATAR_SINNER = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEW_WRqUUYnETMRAAHJJ9QZ7FC_UHsIoIkAAg8vAAILw4hWaSBW0drSGjo8BA.jpg';
+        const AVATAR_LOVELESS = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXO41qVxZKVP0bOyfKK2CMia-kLsMw8gACBisAAkvwuVbF8wxCbK6awD0E.jpg';
+
+        // ----- 场景数据 (按顺序) -----
+        const scenes = [
+            { type: 'dialogue', sender: 'sinner', text: '去之前，至少先采购点装备吧，保证自己的生命安全...' },
+            { type: 'dialogue', sender: 'loveless', text: '有道理，不过肯定不能去超市买，上网买吧。' },
+            { type: 'dialogue', sender: 'sinner', text: '不过表哥啊，你那个朋友真的没事吗......' },
+            { type: 'dialogue', sender: 'loveless', text: '他已经失踪一周了。' },
+            { type: 'dialogue', sender: 'sinner', text: '好吧，当我没说。' },
+            { type: 'action', text: '随后，两人便打开电脑查看了起来......' },
+            { type: 'dialogue', sender: 'sinner', text: '我要的就是这个！ —— 消防斧' },
+            { type: 'action', text: '秋心一眼便相中了一把“消防斧”，宁无为则是买了一把冰镐。' },
+            { type: 'dialogue', sender: 'loveless', text: '对了，我那个朋友之前发给了我一个网址，好像是什么论坛，他就是在那里知道那个“闹鬼的村子”的......总之，先收集一些情报吧。' },
+            // 特殊：网址链接（作为独立气泡，点击跳转）
+            { type: 'link', text: '点此查看论坛 → luntan.html', url: 'luntan.html' }
+        ];
+
+        const container = document.getElementById('storyContainer');
+
+        let currentIdx = 0;
+        let isComplete = false;
+        let timer = null;
+
+        // ----- 构建场景元素 -----
+        function buildSceneItem(scene) {
+            const frag = document.createElement('div');
+
+            if (scene.type === 'narrative') {
+                const p = document.createElement('div');
+                p.className = 'narrative';
+                p.textContent = scene.text;
+                frag.appendChild(p);
+            } 
+            else if (scene.type === 'dialogue') {
+                const row = document.createElement('div');
+                row.className = 'dialogue';
+                const isSinner = (scene.sender === 'sinner');
+                if (isSinner) row.classList.add('right');
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar-sm';
+                const img = document.createElement('img');
+                img.src = isSinner ? AVATAR_SINNER : AVATAR_LOVELESS;
+                img.alt = isSinner ? '秋心' : '宁无为';
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.textContent = isSinner ? '秋' : '宁';
+                    fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:600;font-size:15px;background:#e0d6c8;color:#3a2c1b;';
+                    avatarDiv.appendChild(fallback);
+                };
+                avatarDiv.appendChild(img);
+
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.textContent = scene.text;
+
+                row.appendChild(avatarDiv);
+                row.appendChild(bubble);
+                frag.appendChild(row);
+            }
+            else if (scene.type === 'action') {
+                const action = document.createElement('div');
+                action.className = 'action-tip';
+                action.textContent = scene.text;
+                frag.appendChild(action);
+            }
+            else if (scene.type === 'link') {
+                // 仿聊天中的链接样式，作为独立消息 (无头像，居中)
+                const linkWrap = document.createElement('div');
+                linkWrap.style.cssText = 'display:flex;justify-content:center;width:100%;margin:4px 0;';
+                const linkBtn = document.createElement('a');
+                linkBtn.className = 'link-bubble';
+                linkBtn.textContent = scene.text.replace(' → luntan.html', '');
+                linkBtn.href = scene.url;
+                linkBtn.target = '_self'; // 当前窗口跳转
+                linkBtn.style.textDecoration = 'none';
+                linkWrap.appendChild(linkBtn);
+                frag.appendChild(linkWrap);
+
+                // 额外小提示
+                const hint = document.createElement('div');
+                hint.style.cssText = 'font-size:12px;color:#8a7a66;text-align:center;margin-top:-6px;';
+                hint.textContent = '👆 点击网址跳转';
+                frag.appendChild(hint);
+            }
+
+            return frag;
+        }
+
+        // ----- 显示下一条 (点击触发) -----
+        function showNext() {
+            if (isComplete || timer) return;
+            if (currentIdx >= scenes.length) {
+                isComplete = true;
+                return;
+            }
+
+            const scene = scenes[currentIdx];
+            const el = buildSceneItem(scene);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < scenes.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 280);
+            } else {
+                // 全部显示完成
+                isComplete = true;
+            }
+        }
+
+        // ----- 点击容器触发下一条 -----
+        container.addEventListener('click', function(e) {
+            // 如果点击的是链接按钮，不触发推进 (让链接自己处理)
+            if (e.target.closest('.link-bubble')) return;
+            if (isComplete) return;
+            showNext();
+        });
+
+        // ----- 初始化：自动显示第一条 -----
+        function initStory() {
+            container.innerHTML = '';
+            currentIdx = 0;
+            isComplete = false;
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            // 自动显示第一条
+            setTimeout(() => {
+                if (scenes.length > 0) {
+                    const first = scenes[0];
+                    const el = buildSceneItem(first);
+                    container.appendChild(el);
+                    currentIdx = 1;
+                    container.scrollTop = container.scrollHeight;
+                    if (currentIdx >= scenes.length) {
+                        isComplete = true;
+                    }
+                }
+            }, 200);
+        }
+
+        // 覆盖 showNext 适配从第二条开始
+        const originalShowNext = showNext;
+        showNext = function() {
+            if (isComplete || timer) return;
+            if (currentIdx >= scenes.length) {
+                isComplete = true;
+                return;
+            }
+            const scene = scenes[currentIdx];
+            const el = buildSceneItem(scene);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < scenes.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 280);
+            } else {
+                isComplete = true;
+            }
+        };
+
+        // 重新绑定点击事件 (排除链接)
+        container.removeEventListener('click', showNext);
+        container.addEventListener('click', function(e) {
+            if (e.target.closest('.link-bubble')) return;
+            if (isComplete) return;
+            showNext();
+        });
+
+        initStory();
+
+        // 双击重置 (调试)
+        container.addEventListener('dblclick', function() {
+            if (confirm('重置场景？')) {
+                initStory();
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>

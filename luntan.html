@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · XP 风格</title>
+    <style>
+        /* 全局 XP 风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        /* 窗口模拟 (XP 经典蓝) */
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 标题栏 */
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .icon span {
+            font-size: 14px;
+        }
+
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* 主体内容 */
+        .xp-body {
+            background: #d4d0c8;
+            padding: 12px 14px 16px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+        }
+
+        /* 登录区域 (XP 风格) */
+        .login-area {
+            background: #e8e4db;
+            padding: 12px 14px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 12px;
+        }
+
+        .login-area label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .login-area input[type="text"],
+        .login-area input[type="password"] {
+            background: white;
+            border: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 3px 6px;
+            font-size: 12px;
+            font-family: "Tahoma", sans-serif;
+            width: 110px;
+            outline: none;
+        }
+        .login-area input:focus {
+            border-color: #1a5a9e;
+        }
+
+        .login-area .login-btn {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 4px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            background: #c0bdb6;
+        }
+        .login-area .login-btn:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .login-status {
+            font-size: 11px;
+            color: #2a5a2a;
+            margin-left: auto;
+            font-weight: bold;
+        }
+        .login-status.logged-out {
+            color: #8a2a2a;
+        }
+
+        /* 用户功能栏 (登录后显示) */
+        .user-bar {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 6px 12px;
+            margin-bottom: 16px;
+            display: none;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 14px;
+            font-size: 12px;
+        }
+        .user-bar.show {
+            display: flex;
+        }
+        .user-bar .user-name {
+            font-weight: bold;
+            color: #0d3d7a;
+            margin-right: 8px;
+        }
+        .user-bar .user-link {
+            color: #1a1a1a;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 2px 8px;
+            border: 1px solid #b5b0a8;
+            background: #d4d0c8;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .user-bar .user-link:hover {
+            background: #c0bdb6;
+        }
+        .user-bar .user-link:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+        .user-bar .divider {
+            color: #a09080;
+        }
+
+        /* 帖子列表 */
+        .forum-list {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 4px 0;
+        }
+
+        .forum-item {
+            padding: 8px 14px;
+            border-bottom: 1px solid #c5c0b8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.1s;
+            color: #1a1a1a;
+        }
+        .forum-item:last-child {
+            border-bottom: none;
+        }
+        .forum-item:hover {
+            background: #d0ccc2;
+        }
+
+        .forum-item .icon-folder {
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        .forum-item .title {
+            flex: 1;
+            font-weight: normal;
+        }
+
+        .forum-item .replies {
+            font-size: 11px;
+            color: #5a4a3a;
+            background: #d4d0c8;
+            padding: 0 10px;
+            border-radius: 10px;
+            border: 1px solid #b5b0a8;
+            font-weight: bold;
+        }
+
+        .forum-item .lock {
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        /* 特殊：可点击的帖子 (高亮) */
+        .forum-item.clickable {
+            background: #f0ecd6;
+            border-left: 4px solid #1a5a9e;
+            padding-left: 10px;
+        }
+        .forum-item.clickable:hover {
+            background: #e5dfc4;
+        }
+
+        /* 底部状态栏 */
+        .xp-statusbar {
+            background: #d4d0c8;
+            border-top: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            font-family: "Tahoma", sans-serif;
+        }
+
+        .xp-statusbar .info {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Toast 提示 (模仿 XP 气球) */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 自适应 */
+        @media (max-width: 420px) {
+            .login-area input[type="text"],
+            .login-area input[type="password"] {
+                width: 80px;
+            }
+            .forum-item {
+                font-size: 12px;
+                padding: 6px 10px;
+                flex-wrap: wrap;
+            }
+            .forum-item .replies {
+                font-size: 10px;
+                padding: 0 8px;
+            }
+            .user-bar {
+                font-size: 11px;
+                gap: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- XP 窗口 -->
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>📁</span>
+            <span>迷雾论坛 · 灌水区</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="xp-body">
+        <!-- 登录区域 -->
+        <div class="login-area">
+            <label>👤 账号</label>
+            <input type="text" id="username" value="" placeholder="请输入账号">
+            <label>🔒 密码</label>
+            <input type="password" id="password" value="" placeholder="请输入密码">
+            <button class="login-btn" id="loginBtn">登录</button>
+            <span class="login-status logged-out" id="loginStatus">🔴 未登录</span>
+        </div>
+
+        <!-- 用户功能栏 (登录后显示) -->
+        <div class="user-bar" id="userBar">
+            <span class="user-name" id="displayName">我爱藤井風</span>
+            <span class="divider">|</span>
+            <span class="user-link" id="myPostsLink">📄 我的帖子</span>
+            <span class="divider">|</span>
+            <span class="user-link" id="notifLink">🔔 通知</span>
+            <span class="divider">|</span>
+            <span class="user-link" id="pmLink">✉️ 私信</span>
+        </div>
+
+        <!-- 帖子列表 -->
+        <div class="forum-list" id="forumList">
+            <!-- 由 JS 动态生成 -->
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="xp-statusbar">
+        <span>💬 帖子: 6  |  今日: 2</span>
+        <div class="info">
+            <span>🟢 在线</span>
+            <span>🕒 2026-07-15</span>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        // ----- 帖子数据 -----
+        const posts = [
+            { id: 1, title: '听说有个叫黑水村的村子闹鬼，有hxd知道真相吗？', replies: 23, locked: false, clickable: true, target: 'luntan2.html' },
+            { id: 2, title: '【求助】有没有人去过临山镇？求带路', replies: 5, locked: false, clickable: false },
+            { id: 3, title: '出二手户外装备 头灯/登山杖/睡袋', replies: 12, locked: false, clickable: false },
+            { id: 4, title: '【公告】论坛迁移通知 请及时备份', replies: 8, locked: true, clickable: false },
+            { id: 5, title: '诡异经历分享：我在山里的那一夜', replies: 34, locked: false, clickable: false },
+            { id: 6, title: '版主招募中 有意者私信', replies: 3, locked: false, clickable: false }
+        ];
+
+        // ----- 正确的账号密码 -----
+        const VALID_USERNAME = 'meijiaqi0901';
+        const VALID_PASSWORD = '20040901';
+        const DISPLAY_NAME = '我爱藤井風';
+
+        // ----- DOM 元素 -----
+        const forumList = document.getElementById('forumList');
+        const toast = document.getElementById('toast');
+        const loginStatus = document.getElementById('loginStatus');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const userBar = document.getElementById('userBar');
+        const displayNameSpan = document.getElementById('displayName');
+
+        // 用户功能链接
+        const myPostsLink = document.getElementById('myPostsLink');
+        const notifLink = document.getElementById('notifLink');
+        const pmLink = document.getElementById('pmLink');
+
+        let isLoggedIn = false;
+        let toastTimer = null;
+
+        // ----- 渲染帖子 -----
+        function renderPosts() {
+            forumList.innerHTML = '';
+            posts.forEach(post => {
+                const item = document.createElement('div');
+                item.className = 'forum-item';
+                if (post.clickable) {
+                    item.classList.add('clickable');
+                }
+
+                // 文件夹图标
+                const icon = document.createElement('span');
+                icon.className = 'icon-folder';
+                icon.textContent = post.locked ? '📁🔒' : '📁';
+                item.appendChild(icon);
+
+                // 标题
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'title';
+                titleSpan.textContent = post.title;
+                item.appendChild(titleSpan);
+
+                // 回复数
+                const repliesSpan = document.createElement('span');
+                repliesSpan.className = 'replies';
+                repliesSpan.textContent = post.replies;
+                item.appendChild(repliesSpan);
+
+                // 锁定标记
+                if (post.locked) {
+                    const lock = document.createElement('span');
+                    lock.className = 'lock';
+                    lock.textContent = '🔒';
+                    item.appendChild(lock);
+                }
+
+                // 点击事件
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (post.clickable && post.target) {
+                        window.location.href = post.target;
+                    } else {
+                        showToast('😅 啊哦，看起来这似乎打不开...');
+                    }
+                });
+
+                forumList.appendChild(item);
+            });
+        }
+
+        // ----- Toast 提示 -----
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // ----- 更新 UI (登录状态) -----
+        function updateUI(loggedIn) {
+            isLoggedIn = loggedIn;
+            if (loggedIn) {
+                loginStatus.textContent = `✅ 已登录 (${DISPLAY_NAME})`;
+                loginStatus.className = 'login-status';
+                userBar.classList.add('show');
+                displayNameSpan.textContent = DISPLAY_NAME;
+                // 清空密码框
+                passwordInput.value = '';
+            } else {
+                loginStatus.textContent = '🔴 未登录';
+                loginStatus.className = 'login-status logged-out';
+                userBar.classList.remove('show');
+            }
+        }
+
+        // ----- 登录逻辑 (成功后跳转 yonghu.html) -----
+        function attemptLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // 登录成功，跳转到 yonghu.html (用户主页)
+                // 使用 window.location.href 跳转
+                window.location.href = 'yonghu.html';
+            } else {
+                // 登录失败
+                loginStatus.textContent = '❌ 账号或密码错误';
+                loginStatus.className = 'login-status logged-out';
+                showToast('❌ 账号或密码错误，请重试');
+                passwordInput.value = '';
+            }
+        }
+
+        // ----- 用户功能链接事件 -----
+        // 我的帖子 → 提示打不开
+        myPostsLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!isLoggedIn) return;
+            showToast('😅 看起来打不开...');
+        });
+
+        // 通知 → 跳转 tongzhi.html
+        notifLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!isLoggedIn) return;
+            window.location.href = 'tongzhi.html';
+        });
+
+        // 私信 → 跳转 sixin.html
+        pmLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!isLoggedIn) return;
+            window.location.href = 'sixin.html';
+        });
+
+        // ----- 事件绑定 -----
+        loginBtn.addEventListener('click', attemptLogin);
+
+        usernameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loginBtn.click();
+        });
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loginBtn.click();
+        });
+
+        // ----- 初始化 (未登录) -----
+        renderPosts();
+        updateUI(false);
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('重置论坛？')) {
+                usernameInput.value = '';
+                passwordInput.value = '';
+                updateUI(false);
+                renderPosts();
+                showToast('🔄 已重置');
+            }
+        });
+
+        console.log('🔗 可点击帖子: 听说有个叫黑水村的村子闹鬼，有hxd知道真相吗？ → luntan2.html');
+        console.log('🔑 账号: meijiaqi0901  密码: 20040901  → 显示名: 我爱藤井風');
+        console.log('📌 登录后跳转 → yonghu.html');
+        console.log('📌 我的帖子 → 提示打不开');
+        console.log('📌 通知 → tongzhi.html');
+        console.log('📌 私信 → sixin.html');
+    })();
+</script>
+</body>
+</html>

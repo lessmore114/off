@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · 私信</title>
+    <style>
+        /* 全局 XP 风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .xp-body {
+            background: #d4d0c8;
+            padding: 16px 14px 20px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+        }
+
+        /* 私信列表标题 */
+        .pm-header {
+            font-size: 12px;
+            color: #3a3a3a;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #c5c0b8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .pm-header .count {
+            color: #7a6a5a;
+        }
+
+        /* 私信条目 (XP风格) */
+        .pm-item {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pm-item:hover {
+            background: #d8d4ca;
+        }
+        .pm-item:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .pm-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #b5b0a8;
+            flex-shrink: 0;
+            background: #ccc;
+        }
+        .pm-avatar img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .pm-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .pm-info .pm-name {
+            font-weight: bold;
+            color: #0d3d7a;
+            font-size: 14px;
+        }
+        .pm-info .pm-preview {
+            font-size: 12px;
+            color: #5a4a3a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+        .pm-info .pm-time {
+            font-size: 10px;
+            color: #8a7a6a;
+            margin-top: 2px;
+        }
+
+        .pm-badge {
+            background: #c04040;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 1px 8px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        /* 无消息提示 */
+        .pm-empty {
+            text-align: center;
+            padding: 30px 10px;
+            color: #7a6a5a;
+            font-size: 13px;
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+
+        /* 底部返回 */
+        .back-area {
+            margin-top: 14px;
+            text-align: center;
+        }
+        .back-btn {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 5px 24px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            background: #c0bdb6;
+        }
+        .back-btn:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .xp-statusbar {
+            background: #d4d0c8;
+            border-top: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            font-family: "Tahoma", sans-serif;
+        }
+        .xp-statusbar .info {
+            display: flex;
+            gap: 16px;
+        }
+
+        @media (max-width: 420px) {
+            .pm-item {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            .pm-avatar {
+                width: 34px;
+                height: 34px;
+            }
+            .pm-info .pm-name {
+                font-size: 13px;
+            }
+            .pm-info .pm-preview {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>✉️</span>
+            <span>迷雾论坛 · 私信</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="xp-body">
+        <div class="pm-header">
+            <span>📬 收件箱</span>
+            <span class="count">共 1 封未读</span>
+        </div>
+
+        <!-- 私信列表 -->
+        <div id="pmList">
+            <!-- 由 JS 动态生成 -->
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="back-area">
+            <button class="back-btn" id="backBtn">← 返回用户中心</button>
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="xp-statusbar">
+        <span>✉️ 私信: 1 条未读</span>
+        <div class="info">
+            <span>🟢 已登录</span>
+            <span>🕒 2026-07-15</span>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        // ----- 私信数据 -----
+        const pmData = {
+            id: 1,
+            username: '黑水村点子王',
+            avatar: 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXPY1qVyzYYZX8UqW9sjgG9AUISlBV9AACFCQAAkvwwVYyortl-AzErz0E.jpg',
+            preview: '兄弟，你对黑水村感兴趣？我手里有点料，私聊？',
+            time: '2026-07-10 20:23',
+            unread: true,
+            target: 'Dutch.html'
+        };
+
+        // ----- DOM 元素 -----
+        const pmList = document.getElementById('pmList');
+        const toast = document.getElementById('toast');
+        const backBtn = document.getElementById('backBtn');
+        let toastTimer = null;
+
+        // ----- Toast 提示 -----
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // ----- 渲染私信列表 -----
+        function renderPM() {
+            const item = document.createElement('div');
+            item.className = 'pm-item';
+
+            // 头像
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'pm-avatar';
+            const img = document.createElement('img');
+            img.src = pmData.avatar;
+            img.alt = pmData.username;
+            img.onerror = function() {
+                this.style.display = 'none';
+                const fallback = document.createElement('span');
+                fallback.textContent = pmData.username.charAt(0);
+                fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:bold;font-size:16px;background:#d4d0c8;color:#0d3d7a;';
+                avatarDiv.appendChild(fallback);
+            };
+            avatarDiv.appendChild(img);
+            item.appendChild(avatarDiv);
+
+            // 信息
+            const info = document.createElement('div');
+            info.className = 'pm-info';
+            const name = document.createElement('div');
+            name.className = 'pm-name';
+            name.textContent = pmData.username;
+            info.appendChild(name);
+
+            const preview = document.createElement('div');
+            preview.className = 'pm-preview';
+            preview.textContent = pmData.preview;
+            info.appendChild(preview);
+
+            const time = document.createElement('div');
+            time.className = 'pm-time';
+            time.textContent = `🕒 ${pmData.time}`;
+            info.appendChild(time);
+
+            item.appendChild(info);
+
+            // 未读标记
+            if (pmData.unread) {
+                const badge = document.createElement('span');
+                badge.className = 'pm-badge';
+                badge.textContent = 'NEW';
+                item.appendChild(badge);
+            }
+
+            // 点击跳转
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                window.location.href = pmData.target;
+            });
+
+            pmList.appendChild(item);
+        }
+
+        // ----- 返回按钮 -----
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'yonghu.html';
+        });
+
+        // ----- 初始化 -----
+        renderPM();
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('刷新私信？')) {
+                pmList.innerHTML = '';
+                renderPM();
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('✉️ 私信来自: 黑水村点子王');
+        console.log('🔗 点击后跳转 → Dutch.html');
+        console.log('🔙 返回按钮 → yonghu.html');
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 第二天</title>
+    <style>
+        /* 全局重置 - 全黑背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #6a3a3a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .tense {
+            color: #8a6a4a;
+            font-weight: bold;
+        }
+
+        .story-text .whisper {
+            color: #4a6a6a;
+            font-style: italic;
+        }
+
+        .story-text .hint {
+            color: #6a8a5a;
+        }
+
+        /* 选项区域 - 三个选项网格 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 20px;
+            width: 100%;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 5px 16px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+            white-space: nowrap;
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 4px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        /* 自适应 */
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 14px;
+                padding: 4px 12px;
+                white-space: normal;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+            .choice-grid {
+                gap: 8px 12px;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 黑水村 · 第二天 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 清晨 · 黑水村 ]</span>
+        </p>
+        <p>
+            第二天，天色刚亮，达齐和麦咖便热情地邀请你们在村子里参观。
+            <span class="name">达齐</span> 走在前面，指着几处老屋介绍着村子的历史，
+            <span class="name">麦咖</span> 则在一旁补充着农家乐的规划。
+        </p>
+        <p>
+            <span class="dim">“村子虽然不大，但五脏俱全，祠堂、水井、晒谷场，都还在用。”</span>
+        </p>
+        <p>
+            秋心和表哥一边附和着，一边不动声色地观察着四周。
+            虽然村子里并非空无一人，但几乎都是<span class="evil">老年人和中年人</span>。
+            偶尔有几个孩童在远处张望，但很快就被大人拉走了。
+        </p>
+        <p>
+            <span class="tense">看起来，两人似乎是这村子里唯一的青年。</span>
+        </p>
+        <p>
+            参观结束后，达齐和麦咖被村里一位老人叫去商量事情。
+            趁着这个空档，秋心向表哥使了个眼色——
+        </p>
+        <p>
+            <span class="whisper">“我们去村子里逛逛，自己看看。”</span>
+        </p>
+        <p>
+            <span class="dim">在确定没有人跟着两人后，</span><br>
+            他们站在了村口的岔路上，面前有三个方向。
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 有些答案，或许就藏在这些选择之中。
+        </p>
+    </div>
+
+    <!-- 选项区域 - 三个选项 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 前往何处？ ◆</span>
+        <div class="choice-grid">
+            <a class="choice-link" id="riverBtn"><span class="arrow">↘</span> 去河边</a>
+            <a class="choice-link" id="observeBtn"><span class="arrow">◈</span> 在这里观察整个村子</a>
+            <a class="choice-link" id="roomBtn"><span class="arrow">↗</span> 去达齐的房间</a>
+        </div>
+    </div>
+
+    <!-- 终端提示 (装饰) -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 选择你的方向...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const riverBtn = document.getElementById('riverBtn');
+        const observeBtn = document.getElementById('observeBtn');
+        const roomBtn = document.getElementById('roomBtn');
+
+        // 去河边 → river.html
+        riverBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'river.html';
+            }, 200);
+        });
+
+        // 在这里观察整个村子 → cunzi3.html
+        observeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'cunzi3.html';
+            }, 200);
+        });
+
+        // 去达齐的房间 → daqi.html
+        roomBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'daqi.html';
+            }, 200);
+        });
+
+        // 键盘数字快捷键 (1, 2, 3)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') {
+                e.preventDefault();
+                riverBtn.click();
+            } else if (e.key === '2') {
+                e.preventDefault();
+                observeBtn.click();
+            } else if (e.key === '3') {
+                e.preventDefault();
+                roomBtn.click();
+            }
+        });
+
+        // 双击标题可重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🏚️ cunzi2.html 加载完成 · 第二天');
+        console.log('👀 村子几乎只有老人和中年人');
+        console.log('🔵 选项1: 去河边 → river.html');
+        console.log('🔵 选项2: 在这里观察整个村子 → cunzi3.html');
+        console.log('🔵 选项3: 去达齐的房间 → daqi.html');
+        console.log('⌨️ 快捷键: [1] 河边 [2] 观察 [3] 达齐房间');
+    })();
+</script>
+</body>
+</html>

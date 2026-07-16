@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 门开了</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .whisper {
+            color: #4a6a6a;
+            font-style: italic;
+        }
+
+        .story-text .dialogue {
+            color: #a0a08a;
+        }
+
+        .story-text .tense {
+            color: #8a6a4a;
+            font-weight: bold;
+        }
+
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 24px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 6px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 16px;
+                padding: 5px 18px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 达齐的房间 · 门开了 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 黑水村 · 达齐房间门前 ]</span>
+        </p>
+        <p>
+            <span class="tense">咔嗒——</span>
+        </p>
+        <p>
+            密码锁发出清脆的声响，门锁弹开了。
+            门缝里透出一线黑暗，仿佛里面吞噬了所有的光。
+        </p>
+        <p>
+            <span class="name">秋心</span> 和 <span class="name">宁无为</span> 对视了一眼，
+            两人眼中都是同样的震惊与困惑。
+        </p>
+        <p>
+            <span class="name">秋心</span> 压低了声音，带着一丝难以置信：
+        </p>
+        <p>
+            <span class="dialogue evil">“这他妈怎么回事？！”</span>
+        </p>
+        <p>
+            <span class="dialogue">“我们明明还没破解密码，它自己就开了......”</span>
+        </p>
+        <p>
+            <span class="name">秋心</span> 的声音更低了，带着一丝紧张：
+        </p>
+        <p>
+            <span class="dialogue evil">“真闹鬼了？”</span>
+        </p>
+        <p>
+            <span class="name">宁无为</span> 咽了口唾沫，目光紧盯着那扇半开的门：
+        </p>
+        <p>
+            <span class="dialogue">“我他妈咋知道......开都开了，</span><br>
+            <span class="dialogue">不进去显然说不过去......”</span>
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 门已经敞开，无论里面是什么，都已经无法回避了。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <a class="choice-link" id="enterBtn"><span class="arrow">➤</span> 进去</a>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const enterBtn = document.getElementById('enterBtn');
+
+        // 点击“进去” → 跳转 daqi3.html
+        enterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'daqi3.html';
+            }, 200);
+        });
+
+        // 键盘 Enter 触发
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                enterBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🚪 daqi2.html 加载完成 · 门自动打开');
+        console.log('😱 两人震惊于密码锁自行解锁');
+        console.log('🔵 选项: 进去 → daqi3.html');
+        console.log('⌨️ 快捷键: [Enter] 或 [Space]');
+    })();
+</script>
+</body>
+</html>

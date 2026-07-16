@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 农家乐</title>
+    <style>
+        /* 全局 XP 风格 (2006-2007 网页风格) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        /* 主窗口 - 类似老旧浏览器中的网页 */
+        .xp-window {
+            width: 100%;
+            max-width: 720px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 标题栏 (浏览器风格) */
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* 地址栏 (模拟IE) */
+        .address-bar {
+            background: #e8e4db;
+            padding: 4px 8px;
+            border-bottom: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+        .address-bar .label {
+            color: #3a3a3a;
+            font-weight: bold;
+        }
+        .address-bar .url {
+            background: white;
+            border: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 2px 8px;
+            flex: 1;
+            font-size: 11px;
+            color: #1a1a1a;
+            font-family: "Tahoma", sans-serif;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* 网页主体内容 (仿2006年风格) */
+        .web-content {
+            background: #f5f3ed;
+            padding: 20px 24px 28px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+            min-height: 400px;
+        }
+
+        /* 标题装饰 */
+        .page-title {
+            text-align: center;
+            border-bottom: 3px double #b5a88a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+        }
+        .page-title h1 {
+            font-size: 26px;
+            color: #2a1f0f;
+            font-weight: bold;
+            letter-spacing: 4px;
+            font-family: "Georgia", "Times New Roman", serif;
+        }
+        .page-title .sub {
+            font-size: 13px;
+            color: #6a5a4a;
+            margin-top: 2px;
+        }
+
+        /* 特色介绍 (表格风格) */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        @media (max-width: 500px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 14px 16px;
+            text-align: center;
+        }
+        .feature-card .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .feature-card h3 {
+            font-size: 15px;
+            color: #2a1f0f;
+            margin-bottom: 4px;
+        }
+        .feature-card p {
+            font-size: 13px;
+            color: #3a2a1a;
+            line-height: 1.6;
+        }
+        .feature-card .highlight {
+            color: #8a3a1a;
+            font-weight: bold;
+        }
+
+        /* 青年代表区域 (右上角小框) */
+        .rep-section {
+            float: right;
+            width: 140px;
+            margin: 0 0 12px 16px;
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 8px 10px 10px;
+            font-size: 12px;
+        }
+        .rep-section .rep-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #2a1f0f;
+            text-align: center;
+            border-bottom: 1px solid #b5a88a;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+        }
+
+        .rep-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .rep-item:last-child {
+            margin-bottom: 0;
+        }
+        .rep-item .rep-avatar {
+            width: 44px;
+            height: 44px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            background: #c8c4ba;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #5a4a3a;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            line-height: 1.2;
+            background: #d4d0c8;
+        }
+        .rep-item .rep-name {
+            font-weight: bold;
+            color: #0d3d7a;
+            font-size: 13px;
+        }
+        .rep-item .rep-desc {
+            font-size: 10px;
+            color: #6a5a4a;
+        }
+
+        /* 清除浮动 */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* 联系我们区域 (XP风格) */
+        .contact-section {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 14px 18px;
+            margin: 14px 0 10px 0;
+        }
+        .contact-section .contact-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #2a1f0f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .contact-section .contact-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+            padding: 4px 0;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+        .contact-section .contact-label {
+            font-weight: bold;
+            color: #3a2a1a;
+            min-width: 50px;
+        }
+        .contact-section .contact-value {
+            font-family: "Courier New", monospace;
+            background: white;
+            border: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 2px 12px;
+            word-break: break-all;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .contact-section .contact-value:hover {
+            background: #eef3f7;
+        }
+        .contact-section .contact-hint {
+            font-size: 11px;
+            color: #6a5a4a;
+            margin-left: auto;
+        }
+        .contact-section .contact-address {
+            font-size: 13px;
+            color: #1a1a1a;
+            background: #d4d0c8;
+            border: 1px solid #b5b0a8;
+            padding: 2px 12px;
+            border-radius: 3px;
+        }
+
+        /* 底部签名 */
+        .footer-note {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #c5b8a8;
+            text-align: center;
+            font-size: 11px;
+            color: #7a6a5a;
+        }
+
+        /* 返回按钮 (XP风格) */
+        .back-area {
+            margin-top: 14px;
+            text-align: center;
+        }
+        .back-btn {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 5px 24px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            background: #c0bdb6;
+        }
+        .back-btn:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 自适应 */
+        @media (max-width: 500px) {
+            .web-content {
+                padding: 14px 14px 20px;
+            }
+            .page-title h1 {
+                font-size: 20px;
+            }
+            .rep-section {
+                float: none;
+                width: 100%;
+                margin: 0 0 12px 0;
+            }
+            .feature-card {
+                padding: 10px 12px;
+            }
+            .contact-section {
+                padding: 12px 14px;
+            }
+            .contact-section .contact-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .contact-section .contact-hint {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="xp-window">
+    <!-- 标题栏 (浏览器) -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>🌐</span>
+            <span>Windows Internet Explorer</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 地址栏 -->
+    <div class="address-bar">
+        <span class="label">地址</span>
+        <span class="url">http://www.heishuizhen.com/nongjiale/</span>
+        <span style="font-size:14px;cursor:default;">▶</span>
+    </div>
+
+    <!-- 网页内容 -->
+    <div class="web-content clearfix">
+        <!-- 青年代表 (右上角小框) -->
+        <div class="rep-section">
+            <div class="rep-title">👨‍🌾 青年代表</div>
+            <div class="rep-item">
+                <div class="rep-avatar">达齐.jpg</div>
+                <div>
+                    <div class="rep-name">达齐</div>
+                    <div class="rep-desc">养殖能手</div>
+                </div>
+            </div>
+            <div class="rep-item">
+                <div class="rep-avatar">麦咖.jpg</div>
+                <div>
+                    <div class="rep-name">麦咖</div>
+                    <div class="rep-desc">烹饪达人</div>
+                </div>
+            </div>
+            <div style="font-size:9px;color:#8a7a6a;text-align:center;margin-top:4px;border-top:1px dotted #b5a88a;padding-top:4px;">
+                黑水村 · 青年力量
+            </div>
+        </div>
+
+        <!-- 页面标题 -->
+        <div class="page-title">
+            <h1>🏡 黑水村 · 农家乐</h1>
+            <div class="sub">—— 原生态 · 土滋味 · 2006 年 秋季推荐 ——</div>
+        </div>
+
+        <!-- 特色介绍 -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="icon">🐔</span>
+                <h3>走地鸡 · 自己抓</h3>
+                <p>散养于山林间的<span class="highlight">走地鸡</span>，肉质紧实，味道鲜美。想吃哪只，自己进园抓！体验最原始的狩猎快感。</p>
+            </div>
+            <div class="feature-card">
+                <span class="icon">🐍</span>
+                <h3>土鳝鱼 · 自己捞</h3>
+                <p>稻田水渠中的<span class="highlight">野生鳝鱼</span>，土生土长，肥美滑嫩。提供竹篓和手套，想吃哪条自己捞！</p>
+            </div>
+            <div class="feature-card" style="grid-column: 1 / -1;">
+                <span class="icon">🍲</span>
+                <h3>超级靓汤 · 灶火慢炖</h3>
+                <p>采用 <span class="highlight">柴火土灶</span>，加入新鲜土鸡、鳝鱼及山间药材，熬制 4 小时以上的 <span class="highlight">「黑水村超级靓汤」</span>，汤色浓郁，入口回甘。</p>
+            </div>
+        </div>
+
+        <!-- 一段描述文字 (2006年风格) -->
+        <div style="background:#e8e4db;border:2px solid;border-color:#f5f3ed #0a1a2a #0a1a2a #f5f3ed;padding:10px 16px;margin:12px 0;font-size:13px;color:#2a1f0f;line-height:1.8;">
+            <strong>📢 欢迎来到黑水村！</strong> 这里远离城市喧嚣，保留着最淳朴的乡村风貌。我们提供 <strong>“自己动手，丰衣足食”</strong> 的农家体验。抓鸡、捞鳝、捡柴、生火……感受 2006 年最地道的乡土人情。
+            <span style="display:block;margin-top:4px;color:#6a5a4a;font-size:12px;">—— 黑水村全体村民 敬上</span>
+        </div>
+
+        <!-- 联系我们 (新增) -->
+        <div class="contact-section">
+            <div class="contact-title">📬 联系我们</div>
+            <div class="contact-row">
+                <span class="contact-label">邮箱：</span>
+                <span class="contact-value" id="emailCopy">3315238734@qq.com</span>
+                <span class="contact-hint">💡 点击邮箱复制</span>
+            </div>
+            <div class="contact-row">
+                <span class="contact-label">地址：</span>
+                <span class="contact-address">📍 黑水村 村口大树旁 001 号</span>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="footer-note">
+            <span>© 2006 黑水村农家乐 · 本网站由 “黑水村点子王” 友情制作</span>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="back-area">
+            <button class="back-btn" id="backBtn">← 返回私信</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        const toast = document.getElementById('toast');
+        const backBtn = document.getElementById('backBtn');
+        const emailEl = document.getElementById('emailCopy');
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // 返回按钮 → 跳转 Dutch.html
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'Dutch.html';
+        });
+
+        // 点击邮箱复制
+        emailEl.addEventListener('click', function() {
+            const email = this.textContent.trim();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(() => {
+                    showToast('✅ 已复制邮箱: ' + email);
+                }).catch(() => {
+                    fallbackCopy(email);
+                });
+            } else {
+                fallbackCopy(email);
+            }
+        });
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('✅ 已复制邮箱: ' + text);
+            } catch (e) {
+                showToast('❌ 复制失败，请手动复制');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('刷新页面？')) {
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('🏡 黑水村农家乐页面已加载');
+        console.log('👨‍🌾 青年代表: 达齐.jpg, 麦咖.jpg (占位)');
+        console.log('📧 邮箱: 3315238734@qq.com (点击复制)');
+        console.log('📍 地址: 黑水村 村口大树旁 001 号');
+        console.log('🔙 返回按钮 → Dutch.html');
+    })();
+</script>
+</body>
+</html> 

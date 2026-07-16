@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · 用户中心</title>
+    <style>
+        /* 全局 XP 风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        /* 窗口模拟 (XP 经典蓝) */
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 标题栏 */
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .icon span {
+            font-size: 14px;
+        }
+
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* 主体内容 */
+        .xp-body {
+            background: #d4d0c8;
+            padding: 16px 14px 20px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+        }
+
+        /* 用户信息卡片 (XP风格) */
+        .user-card {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .user-avatar-lg {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #b5b0a8;
+            flex-shrink: 0;
+            background: #ccc;
+        }
+        .user-avatar-lg img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+        .user-info .display-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0d3d7a;
+        }
+        .user-info .user-status {
+            font-size: 12px;
+            color: #2a5a2a;
+            margin-top: 2px;
+        }
+        .user-info .user-id {
+            font-size: 11px;
+            color: #7a6a5a;
+            margin-top: 2px;
+        }
+
+        .user-badge {
+            background: #d4d0c8;
+            border: 1px solid #b5b0a8;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #3a3a3a;
+        }
+
+        /* 功能菜单 (XP风格按钮组) */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .menu-item {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: background 0.1s;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        .menu-item:hover {
+            background: #d8d4ca;
+        }
+        .menu-item:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .menu-item .menu-icon {
+            font-size: 24px;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .menu-item .menu-label {
+            flex: 1;
+            font-weight: bold;
+        }
+        .menu-item .menu-arrow {
+            color: #8a7a6a;
+            font-size: 18px;
+        }
+        .menu-item .menu-desc {
+            font-size: 11px;
+            color: #7a6a5a;
+            font-weight: normal;
+        }
+
+        /* 音乐链接区域 (XP风格) */
+        .music-section {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 12px 16px;
+            margin-top: 14px;
+        }
+
+        .music-section .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #3a3a3a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .music-link {
+            display: block;
+            background: #d4d0c8;
+            border: 1px solid #b5b0a8;
+            padding: 6px 12px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #0d3d7a;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.1s;
+            word-break: break-all;
+        }
+        .music-link:last-child {
+            margin-bottom: 0;
+        }
+        .music-link:hover {
+            background: #c8c4ba;
+            text-decoration: underline;
+        }
+        .music-link:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+        .music-link .link-icon {
+            margin-right: 6px;
+        }
+
+        /* 社交账号区域 (XP风格) */
+        .social-section {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 12px 16px;
+            margin-top: 14px;
+        }
+
+        .social-section .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #3a3a3a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .social-link {
+            display: block;
+            background: #d4d0c8;
+            border: 1px solid #b5b0a8;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #0d3d7a;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.1s;
+            word-break: break-all;
+        }
+        .social-link:hover {
+            background: #c8c4ba;
+            text-decoration: underline;
+        }
+        .social-link:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+        .social-link .link-icon {
+            margin-right: 6px;
+        }
+
+        /* 底部状态栏 */
+        .xp-statusbar {
+            background: #d4d0c8;
+            border-top: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            font-family: "Tahoma", sans-serif;
+        }
+
+        .xp-statusbar .info {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 自适应 */
+        @media (max-width: 420px) {
+            .user-card {
+                padding: 12px 14px;
+                gap: 12px;
+            }
+            .user-avatar-lg {
+                width: 44px;
+                height: 44px;
+            }
+            .user-info .display-name {
+                font-size: 15px;
+            }
+            .menu-item {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            .menu-item .menu-icon {
+                font-size: 20px;
+                width: 30px;
+            }
+            .music-link,
+            .social-link {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- XP 窗口 -->
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>👤</span>
+            <span>迷雾论坛 · 用户中心</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="xp-body">
+        <!-- 用户信息卡片 -->
+        <div class="user-card">
+            <div class="user-avatar-lg" id="avatarContainer">
+                <img id="userAvatar" src="" alt="用户头像">
+            </div>
+            <div class="user-info">
+                <div class="display-name" id="displayName">我爱藤井風</div>
+                <div class="user-status">🟢 在线</div>
+                <div class="user-id">📌 用户ID: meijiaqi0901</div>
+            </div>
+            <div class="user-badge">⭐ 初级会员</div>
+        </div>
+
+        <!-- 功能菜单 -->
+        <div class="menu-grid">
+            <!-- 我的帖子 -->
+            <div class="menu-item" id="myPostsLink">
+                <span class="menu-icon">📄</span>
+                <span class="menu-label">我的帖子</span>
+                <span class="menu-desc">查看我发布的所有主题</span>
+                <span class="menu-arrow">›</span>
+            </div>
+
+            <!-- 通知 -->
+            <div class="menu-item" id="notifLink">
+                <span class="menu-icon">🔔</span>
+                <span class="menu-label">通知</span>
+                <span class="menu-desc">查看系统与回复通知</span>
+                <span class="menu-arrow">›</span>
+            </div>
+
+            <!-- 私信 -->
+            <div class="menu-item" id="pmLink">
+                <span class="menu-icon">✉️</span>
+                <span class="menu-label">私信</span>
+                <span class="menu-desc">查看私人消息</span>
+                <span class="menu-arrow">›</span>
+            </div>
+        </div>
+
+        <!-- 音乐链接区域 -->
+        <div class="music-section">
+            <div class="section-title">🎵 我的收藏 · 音乐</div>
+            <a class="music-link" href="https://music.163.com/song?id=1449537106&uct2=U2FsdGVkX19xWMjkKBTnn0k5LtjOAehn8Hyv+Zqqr2M=" target="_blank">
+                <span class="link-icon">🎶</span> 曲目一 · 点击播放
+            </a>
+            <a class="music-link" href="https://music.163.com/song?id=1930010660&uct2=U2FsdGVkX1+qTHcYjmmMo5038+QSTkuWvir474TjX6o=" target="_blank">
+                <span class="link-icon">🎶</span> 曲目二 · 点击播放
+            </a>
+        </div>
+
+        <!-- 社交账号区域 (新增) -->
+        <div class="social-section">
+            <div class="section-title">🌐 我的其他社交账号</div>
+            <a class="social-link" href="https://space.bilibili.com/3546913789971185?spm_id_from=333.337.0.0" target="_blank">
+                <span class="link-icon">📺</span> Bilibili 空间
+            </a>
+        </div>
+
+        <!-- 底部快捷返回 -->
+        <div style="margin-top:14px; text-align:center; font-size:12px; color:#7a6a5a;">
+            <a href="luntan.html" style="color:#0d3d7a; text-decoration:none;">← 返回论坛首页</a>
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="xp-statusbar">
+        <span>💬 在线用户: 1</span>
+        <div class="info">
+            <span>🟢 已登录</span>
+            <span>🕒 2026-07-15</span>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        // ----- 头像链接 (用户“我爱藤井風”) -----
+        const AVATAR_ME = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXPOVqVybySZKy0ttPedD7Vkuf6sW43AACTiMAAkvwwVY_Uo8WHdynyz0E.jpg';
+
+        // ----- DOM 元素 -----
+        const toast = document.getElementById('toast');
+        const userAvatar = document.getElementById('userAvatar');
+        const displayNameSpan = document.getElementById('displayName');
+
+        // 功能链接
+        const myPostsLink = document.getElementById('myPostsLink');
+        const notifLink = document.getElementById('notifLink');
+        const pmLink = document.getElementById('pmLink');
+
+        let toastTimer = null;
+
+        // ----- Toast 提示 -----
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // ----- 设置用户信息 -----
+        function setUserInfo() {
+            displayNameSpan.textContent = '我爱藤井風';
+            userAvatar.src = AVATAR_ME;
+            userAvatar.onerror = function() {
+                this.style.display = 'none';
+                const fallback = document.createElement('span');
+                fallback.textContent = '風';
+                fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:bold;font-size:24px;background:#d4d0c8;color:#0d3d7a;';
+                document.getElementById('avatarContainer').appendChild(fallback);
+            };
+        }
+
+        // ----- 功能点击事件 -----
+        // 我的帖子 → 提示打不开
+        myPostsLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showToast('😅 看起来打不开...');
+        });
+
+        // 通知 → 跳转 tongzhi.html
+        notifLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.location.href = 'tongzhi.html';
+        });
+
+        // 私信 → 跳转 sixin.html
+        pmLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.location.href = 'sixin.html';
+        });
+
+        // ----- 初始化 -----
+        setUserInfo();
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('重置用户界面？')) {
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('👤 用户: 我爱藤井風');
+        console.log('📌 我的帖子 → 提示打不开');
+        console.log('📌 通知 → tongzhi.html');
+        console.log('📌 私信 → sixin.html');
+        console.log('🎵 音乐链接已添加');
+        console.log('🌐 社交账号: Bilibili 空间已添加');
+    })();
+</script>
+</body>
+</html>

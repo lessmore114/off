@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>结局 · 无事发生</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #d6d8db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 100%;
+            max-width: 380px;
+            min-height: 700px;
+            background: #f7f5f2;
+            border-radius: 38px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.30);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .status-bar {
+            padding: 10px 18px 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e1e1e;
+            background: #f7f5f2;
+            flex-shrink: 0;
+        }
+
+        .scene-header {
+            padding: 8px 16px 12px;
+            background: #f7f5f2;
+            border-bottom: 1px solid #ddd8d0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            font-weight: 300;
+            color: #555;
+            cursor: default;
+            line-height: 1;
+        }
+
+        .scene-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-right: 24px;
+            letter-spacing: 0.5px;
+            color: #3a2c1b;
+        }
+        .scene-title small {
+            font-size: 11px;
+            font-weight: 400;
+            color: #8a7a66;
+        }
+
+        .story-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 24px 24px;
+            gap: 20px;
+            background: #f7f5f2;
+            text-align: center;
+        }
+
+        .ending-icon {
+            font-size: 72px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .ending-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c241a;
+            letter-spacing: 2px;
+        }
+
+        .ending-sub {
+            font-size: 16px;
+            color: #6a5d4e;
+            line-height: 1.6;
+            max-width: 280px;
+            margin: 4px auto;
+        }
+
+        .ending-divider {
+            width: 60px;
+            height: 2px;
+            background: #d0c5b8;
+            margin: 8px auto;
+            border-radius: 4px;
+        }
+
+        .ending-description {
+            font-size: 15px;
+            color: #3d352b;
+            background: #f0ede8;
+            padding: 16px 22px;
+            border-radius: 20px;
+            line-height: 1.7;
+            max-width: 320px;
+            border-left: 4px solid #b8a692;
+        }
+
+        .bottom-area {
+            padding: 12px 16px 16px;
+            background: #f7f5f2;
+            border-top: 1px solid #e0dad2;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .restart-btn {
+            display: inline-block;
+            background: #b88a4b;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 30px;
+            font-size: 17px;
+            font-weight: 500;
+            box-shadow: 0 4px 14px rgba(184, 138, 75, 0.3);
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 0.8px;
+        }
+        .restart-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 6px rgba(184, 138, 75, 0.3);
+        }
+
+        .restart-btn:hover {
+            background: #a87a3e;
+        }
+
+        .achievement-badge {
+            font-size: 13px;
+            color: #8a7a66;
+            background: #e8e2d9;
+            padding: 4px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-container > * {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>🔋 100%</span>
+    </div>
+    <!-- 标题 -->
+    <div class="scene-header">
+        <span class="back-btn">‹</span>
+        <div class="scene-title">结局 · 无事发生</div>
+        <span style="font-size:18px; opacity:0.5;">⋯</span>
+    </div>
+
+    <!-- 结局内容 -->
+    <div class="story-container">
+        <div class="ending-icon">☕</div>
+        <div class="ending-title">无事发生</div>
+        <div class="ending-divider"></div>
+        <div class="ending-sub">你选择了“不去...”</div>
+        <div class="ending-description">
+            明智的选择......<br>
+            生活依旧平静，成吉思鸡的香味还萦绕在店里。<br>
+            有些冒险，留在想象中就好。
+        </div>
+        <div class="achievement-badge">🏆 结局1 · 无事发生</div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-area">
+        <button class="restart-btn" id="restartBtn">🔄 再来一次？</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const restartBtn = document.getElementById('restartBtn');
+
+        restartBtn.addEventListener('click', function() {
+            // 跳转回 index.html (聊天起始页)
+            window.location.href = 'index.html';
+        });
+
+        // 点击页面任意位置也可触发 (但为了不误触，只绑定按钮)
+        // 额外：双击标题重置 (调试)
+        const header = document.querySelector('.scene-header');
+        header.addEventListener('dblclick', function() {
+            if (confirm('跳转到 index.html ？')) {
+                window.location.href = 'index.html';
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>

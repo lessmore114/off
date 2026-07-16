@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · 帖子详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .xp-body {
+            background: #d4d0c8;
+            padding: 12px 14px 16px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            font-size: 12px;
+            color: #0a1a2a;
+            padding: 4px 0 10px 0;
+            border-bottom: 1px solid #c5c0b8;
+            margin-bottom: 12px;
+        }
+        .breadcrumb a {
+            color: #0d3d7a;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* 帖子标题 */
+        .post-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a1a1a;
+            padding: 6px 0 4px 0;
+        }
+
+        .post-meta {
+            font-size: 11px;
+            color: #5a4a3a;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c5c0b8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        /* 楼层样式 (XP风格) */
+        .floor {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .floor-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #3a3a3a;
+        }
+
+        .floor-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #b5b0a8;
+            flex-shrink: 0;
+            background: #ccc;
+        }
+        .floor-avatar img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .floor-username {
+            font-weight: bold;
+            color: #0d3d7a;
+        }
+        .floor-username.me {
+            color: #1a7a3a;
+        }
+
+        .floor-time {
+            font-size: 10px;
+            color: #7a6a5a;
+            margin-left: auto;
+        }
+
+        .floor-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            padding: 4px 4px 2px 4px;
+        }
+
+        .floor-signature {
+            font-size: 11px;
+            color: #8a7a6a;
+            border-top: 1px dashed #c5c0b8;
+            margin-top: 6px;
+            padding-top: 4px;
+            font-style: italic;
+        }
+
+        /* 返回按钮 */
+        .back-area {
+            padding-top: 8px;
+            text-align: center;
+        }
+        .back-btn {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 4px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            background: #c0bdb6;
+        }
+        .back-btn:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* Toast 提示 (XP 气球) */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 右上角弹出提示 (仿XP气泡) */
+        .popup-tip {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 14px 20px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            z-index: 999;
+            max-width: 300px;
+            display: none;
+            background: #fff8e8;
+            border-left: 4px solid #1a5a9e;
+        }
+        .popup-tip.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .popup-tip .tip-title {
+            font-weight: bold;
+            color: #0d3d7a;
+            font-size: 14px;
+        }
+        .popup-tip .tip-body {
+            margin: 6px 0 4px 0;
+            line-height: 1.5;
+        }
+        .popup-tip .tip-account {
+            background: #d4d0c8;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            border: 1px solid #b5b0a8;
+            display: inline-block;
+            margin: 2px 0;
+        }
+        .popup-tip .tip-close {
+            float: right;
+            cursor: pointer;
+            font-weight: bold;
+            color: #8a2a2a;
+            margin-left: 12px;
+            font-size: 16px;
+            line-height: 1;
+        }
+        .popup-tip .tip-close:hover {
+            color: #c00;
+        }
+
+        @media (max-width: 420px) {
+            .popup-tip {
+                top: 10px;
+                right: 10px;
+                max-width: 260px;
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+            .floor {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>📄</span>
+            <span>迷雾论坛 · 帖子详情</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="xp-body">
+        <!-- 面包屑 -->
+        <div class="breadcrumb">
+            <a href="luntan.html">◀ 返回论坛</a> &nbsp;›&nbsp; <span>诡异讨论</span>
+        </div>
+
+        <!-- 帖子标题 -->
+        <div class="post-title">📌 听说有个叫黑水村的村子闹鬼，有hxd知道真相吗？</div>
+        <div class="post-meta">
+            <span>👤 匿名用户 &nbsp;·&nbsp; 2026-07-10</span>
+            <span>💬 23 回复</span>
+        </div>
+
+        <!-- 楼层列表 -->
+        <div id="floorContainer">
+            <!-- 由 JS 动态生成 -->
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="back-area">
+            <button class="back-btn" id="backBtn">← 返回论坛</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<!-- 右上角弹出提示 -->
+<div class="popup-tip" id="popupTip">
+    <span class="tip-close" id="popupClose">✕</span>
+    <div class="tip-title">💡 表哥的留言</div>
+    <div class="tip-body">
+        对了表弟，这是我朋友之前发我的账号和密码，你登上去试试呢？
+    </div>
+    <div style="margin-top:6px;">
+        <span class="tip-account">账号: meijiaqi0901</span>
+        <span style="margin:0 4px;">|</span>
+        <span class="tip-account">密码: 20040901</span>
+    </div>
+    <div style="margin-top:6px; font-size:11px; color:#7a6a5a;">
+        👆 复制后去论坛登录
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 头像链接 (用户“我爱藤井風”) -----
+        const AVATAR_ME = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXPOVqVybySZKy0ttPedD7Vkuf6sW43AACTiMAAkvwwVY_Uo8WHdynyz0E.jpg';
+
+        // ----- 楼层数据 (按顺序) -----
+        const floors = [
+            {
+                username: '匿名用户',
+                avatar: null,
+                time: '2026-07-10 14:23',
+                content: '如题，最近在几个群里都看到有人在说黑水村的事情，说是半夜有哭声，还有人在村口看到白影。有没有大佬知道内幕的？求分享！',
+                signature: '— 好奇心害死猫'
+            },
+            {
+                username: '山里人',
+                avatar: null,
+                time: '2026-07-10 15:10',
+                content: '我老家就在那附近，听老人说那村子以前出过事，后来就慢慢荒了。但具体啥事没人愿意细说，神神秘秘的。',
+                signature: '— 敬畏自然'
+            },
+            {
+                username: '探险家老K',
+                avatar: null,
+                time: '2026-07-10 16:45',
+                content: '我上个月特意骑车去了一趟，村子确实没什么人住了，但有几间屋子看着还挺新，不像荒废很久的样子。最诡异的是村口有烧过的纸钱，感觉刚有人来过。',
+                signature: '— 世界很大，我想去看看'
+            },
+            {
+                username: '我爱藤井風',
+                avatar: AVATAR_ME,
+                time: '2026-07-10 18:02',
+                content: '我去，真的假的？有没有懂的兄弟私信我一下，我有点好奇了。',
+                signature: '— 藤井風は神',
+                isMe: true
+            },
+            {
+                username: '夜行客',
+                avatar: null,
+                time: '2026-07-10 19:30',
+                content: '楼上的，你要是真想去，建议多带点人。那地方手机信号很差，而且晚上真的会有奇怪的声音。我之前露营在附近，吓得半夜跑路了。',
+                signature: '— 活着真好'
+            }
+        ];
+
+        // ----- DOM 元素 -----
+        const floorContainer = document.getElementById('floorContainer');
+        const toast = document.getElementById('toast');
+        const popupTip = document.getElementById('popupTip');
+        const popupClose = document.getElementById('popupClose');
+        let toastTimer = null;
+        let popupShown = false;
+
+        // ----- Toast 提示 -----
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // ----- 渲染楼层 -----
+        function renderFloors() {
+            floorContainer.innerHTML = '';
+            floors.forEach((floor, index) => {
+                const div = document.createElement('div');
+                div.className = 'floor';
+
+                // 头部
+                const header = document.createElement('div');
+                header.className = 'floor-header';
+
+                // 头像
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'floor-avatar';
+                if (floor.avatar) {
+                    const img = document.createElement('img');
+                    img.src = floor.avatar;
+                    img.alt = floor.username;
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        const fallback = document.createElement('span');
+                        fallback.textContent = floor.username.charAt(0);
+                        fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:bold;font-size:14px;background:#d4d0c8;color:#3a3a3a;';
+                        avatarDiv.appendChild(fallback);
+                    };
+                    avatarDiv.appendChild(img);
+                } else {
+                    const fallback = document.createElement('span');
+                    fallback.textContent = floor.username.charAt(0);
+                    fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:bold;font-size:14px;background:#d4d0c8;color:#3a3a3a;';
+                    avatarDiv.appendChild(fallback);
+                }
+                header.appendChild(avatarDiv);
+
+                // 用户名
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'floor-username';
+                if (floor.isMe) {
+                    nameSpan.classList.add('me');
+                    nameSpan.textContent = floor.username + ' ★';
+                } else {
+                    nameSpan.textContent = floor.username;
+                }
+                header.appendChild(nameSpan);
+
+                // 时间
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'floor-time';
+                timeSpan.textContent = floor.time + (floor.isMe ? ' (我的评论)' : '');
+                header.appendChild(timeSpan);
+
+                div.appendChild(header);
+
+                // 内容
+                const content = document.createElement('div');
+                content.className = 'floor-content';
+                content.textContent = floor.content;
+                div.appendChild(content);
+
+                // 签名
+                if (floor.signature) {
+                    const sig = document.createElement('div');
+                    sig.className = 'floor-signature';
+                    sig.textContent = floor.signature;
+                    div.appendChild(sig);
+                }
+
+                floorContainer.appendChild(div);
+
+                // 如果这一层是“我爱藤井風”的评论，且弹出提示尚未显示，则触发弹出
+                if (floor.isMe && !popupShown) {
+                    // 延迟一秒后弹出 (让用户先看到评论)
+                    setTimeout(() => {
+                        showPopupTip();
+                    }, 1000);
+                }
+            });
+        }
+
+        // ----- 显示右上角弹出提示 -----
+        function showPopupTip() {
+            if (popupShown) return;
+            popupShown = true;
+            popupTip.classList.add('show');
+            // 自动关闭 (但用户也可以手动关闭)
+            setTimeout(() => {
+                // 不自动关闭，让用户手动关
+            }, 10000);
+        }
+
+        // ----- 关闭弹出提示 -----
+        function closePopupTip() {
+            popupTip.classList.remove('show');
+        }
+
+        // ----- 事件绑定 -----
+        // 关闭按钮
+        popupClose.addEventListener('click', closePopupTip);
+
+        // 点击弹出提示外部也可关闭 (点击文档其他区域)
+        document.addEventListener('click', function(e) {
+            if (popupTip.classList.contains('show')) {
+                // 如果点击的不是弹出提示本身及其子元素，则关闭
+                if (!popupTip.contains(e.target)) {
+                    closePopupTip();
+                }
+            }
+        });
+
+        // 返回按钮 → 跳转回 luntan.html
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.location.href = 'luntan.html';
+        });
+
+        // 面包屑返回
+        document.querySelector('.breadcrumb a').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'luntan.html';
+        });
+
+        // ----- 初始化 -----
+        renderFloors();
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('重置帖子？')) {
+                popupShown = false;
+                closePopupTip();
+                renderFloors();
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('👤 用户“我爱藤井風”出现在第4楼');
+        console.log('💡 弹出提示: 账号 meijiaqi0901 / 密码 20040901');
+    })();
+</script>
+</body>
+</html>

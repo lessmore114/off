@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 后山</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .tense {
+            color: #8a6a4a;
+            font-weight: bold;
+        }
+
+        .story-text .dialogue {
+            color: #a0a08a;
+        }
+
+        .story-text .creepy {
+            color: #8a5a4a;
+            font-weight: bold;
+        }
+
+        .story-text .burn {
+            color: #7a5a2a;
+        }
+
+        /* 选项区域 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 28px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 6px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 16px;
+                padding: 5px 18px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 黑水村 · 后山深处 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 后山 · 密林深处 ]</span>
+        </p>
+        <p>
+            两人继续深入探索。手电筒的光束在黑暗中摇曳，只能照亮前方几步远的距离。
+            周围的树木扭曲着枝干，像是无数只伸向天空的手。
+        </p>
+        <p>
+            <span class="creepy">沙沙——沙沙——</span>
+        </p>
+        <p>
+            不知不觉间，周围出现了脚步声。
+            不是他们自己的——那声音忽远忽近，像是有人跟在他们身后，却又始终保持着距离。
+        </p>
+        <p>
+            一阵冷风毫无征兆地吹过，<span class="evil">带着一股说不清的寒意</span>，
+            仿佛有什么东西正从黑暗中凝视着他们。
+        </p>
+        <p>
+            而在不远处，有什么东西正在焚烧。
+        </p>
+        <p>
+            手电筒的光束扫过去——<span class="burn">那是正在焚烧的纸钱</span>。
+            暗红色的火舌舔舐着纸钱边缘，灰烬在夜风中飘散，像是某种无声的祭奠。
+        </p>
+        <p>
+            而在最远处，<span class="creepy">似乎还摆着几个纸人</span>。
+            它们静静地立在那里，惨白的脸上画着诡异的笑容，
+            在火光中忽明忽暗，<span class="evil">仿佛随时会转过头来</span>。
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 后山的秘密，似乎才刚刚揭开一角。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <a class="choice-link" id="nextBtn"><span class="arrow">➤</span> 继续前进</a>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const nextBtn = document.getElementById('nextBtn');
+
+        // 点击“继续前进” → 跳转 houshan2.html
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'houshan2.html';
+            }, 200);
+        });
+
+        // 键盘 Enter 触发
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                nextBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🏔️ houshan.html 加载完成 · 后山探索');
+        console.log('👣 周围的脚步声 + 冷风');
+        console.log('🔥 焚烧的纸钱 + 远处的纸人');
+        console.log('🔵 选项: 继续前进 → houshan2.html');
+        console.log('⌨️ 快捷键: [Enter] 或 [Space]');
+    })();
+</script>
+</body>
+</html>

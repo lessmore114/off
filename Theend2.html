@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>结局 · 鸡佬兄弟，给我装50卢比的成吉思鸡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #f5f3ed;
+            border: 2px solid #d4d0c8;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 2px solid #d4d0c8;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+        .game-title .ending-label {
+            color: #8a6a3a;
+            letter-spacing: 4px;
+        }
+
+        /* 结局图片 */
+        .ending-image {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .ending-image img {
+            max-width: 100%;
+            height: auto;
+            max-height: 280px;
+            border: 2px solid #d4d0c8;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .story-text {
+            color: #1a1a1a;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #6a6a6a;
+            font-style: italic;
+        }
+
+        .story-text .highlight-text {
+            color: #8a7a3a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .ending-title {
+            color: #c4a84a;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 4px;
+            margin: 10px 0;
+        }
+
+        .story-text .verdict {
+            color: #4a7a4a;
+            font-weight: bold;
+        }
+
+        .choice-area {
+            border-top: 2px solid #d4d0c8;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 24px;
+            width: 100%;
+        }
+
+        .choice-link {
+            color: #0d3d7a;
+            font-size: 17px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 22px;
+            border: 2px solid #b5b0a8;
+            border-radius: 4px;
+            background: #e8e4db;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+        }
+
+        .choice-link:hover {
+            background: #d8d4ca;
+            border-color: #8a8a7a;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .choice-link:active {
+            transform: scale(0.97);
+            border-color: #0a1a2a;
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 6px;
+        }
+
+        .choice-link.special {
+            color: #8a6a2a;
+            border-color: #c4a84a;
+            background: #f5f0e0;
+        }
+        .choice-link.special:hover {
+            background: #ede8d0;
+            border-color: #a88a3a;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #8a8a7a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 15px;
+                padding: 5px 16px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+            .choice-grid {
+                gap: 8px 12px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .ending-image img {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 结局 <span class="ending-label">· 鸡佬兄弟，给我装50卢比的成吉思鸡</span> <span class="highlight">◆</span>
+    </div>
+
+    <!-- 结局图片 -->
+    <div class="ending-image">
+        <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXQUxqV1T7Ncvtw93voKKsCFYblg6qRgAChSgAAkvwwVY0nyS2mFt-Ij0E.jpg" alt="结局图片">
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 法院 · 宣判日 ]</span>
+        </p>
+        <p>
+            案件很快水落石出。达齐和麦咖因过失致人死亡、非法拘禁（伪造闹鬼现场）等罪名被依法逮捕。
+        </p>
+        <p>
+            <span class="verdict">达齐被判处有期徒刑，麦咖作为从犯也被判处相应刑罚。</span>
+        </p>
+        <p>
+            而秋心和宁无为，在经过调查后，被认定为紧急避险行为，不构成犯罪。
+        </p>
+        <p>
+            <span class="dim">不过……</span> 毕竟在村子里闹出了这么大动静，两人还是因为扰乱公共秩序被处以罚款，并拘留了几天。
+        </p>
+        <p>
+            但事情并没有就此结束。
+        </p>
+        <p>
+            <span class="highlight-text">这起离奇的“闹鬼骗局致人死亡案”迅速登上了新闻头条。</span>
+        </p>
+        <p>
+            各路媒体蜂拥而至，争相报道黑水村的闹剧。
+            而宁无为的 <span class="name">“正宗印度成吉思鸡”</span>，也意外地在这场风波中得到了巨大曝光。
+        </p>
+        <p>
+            一时间，成吉思鸡的订单从四面八方涌来，甚至有人专门驱车前来，只为尝一尝这款“上过新闻的传奇美食”。
+        </p>
+        <p style="color:#c4a84a; font-size:1.1em; font-weight:bold; text-align:center; margin: 12px 0; letter-spacing:3px;">
+            —— 结局2：给我装50卢比的成吉思鸡 ——
+        </p>
+        <p style="color:#6a6a6a; font-style:italic; text-align:center;">
+            闹鬼是假的，但成吉思鸡的好吃，是真的。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <div class="choice-grid">
+            <a class="choice-link" id="restartBtn"><span class="arrow">🔄</span> 重新来一次？</a>
+            <a class="choice-link special" id="extraBtn"><span class="arrow">📖</span> 番外</a>
+        </div>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 故事已完结...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const restartBtn = document.getElementById('restartBtn');
+        const extraBtn = document.getElementById('extraBtn');
+
+        // 重新来一次？ → index.html
+        restartBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#0d3d7a';
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 200);
+        });
+
+        // 番外 → fanwai.html
+        extraBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8a6a2a';
+            setTimeout(() => {
+                window.location.href = 'fanwai.html';
+            }, 200);
+        });
+
+        // 键盘快捷键：1 重新来，2 番外
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') {
+                e.preventDefault();
+                restartBtn.click();
+            } else if (e.key === '2') {
+                e.preventDefault();
+                extraBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🏁 Theend2.html 加载完成 · 结局2');
+        console.log('⚖️ 达齐和麦咖被判刑，秋心两人罚款+拘留');
+        console.log('📰 新闻曝光 → 成吉思鸡意外走红');
+        console.log('🔵 选项1: 重新来一次？ → index.html');
+        console.log('🔵 选项2: 番外 → fanwai.html');
+        console.log('⌨️ 快捷键: [1] 重新来 [2] 番外');
+    })();
+</script>
+</body>
+</html>

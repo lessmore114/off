@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · 私信聊天</title>
+    <style>
+        /* 全局 XP 风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 620px;
+        }
+
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            flex-shrink: 0;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* 聊天头部 */
+        .chat-header {
+            background: #e8e4db;
+            padding: 8px 14px;
+            border-bottom: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .chat-header .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #b5b0a8;
+            flex-shrink: 0;
+            background: #ccc;
+        }
+        .chat-header .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        .chat-header .chat-with {
+            font-weight: bold;
+            font-size: 14px;
+            color: #0d3d7a;
+        }
+        .chat-header .chat-status {
+            font-size: 11px;
+            color: #2a5a2a;
+            margin-left: auto;
+        }
+
+        /* 聊天消息区域 (滚动) */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 14px;
+            background: #e8e4db;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* 消息气泡 (XP风格) */
+        .msg {
+            max-width: 80%;
+            padding: 8px 12px;
+            border: 2px solid;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+            animation: fadeIn 0.2s ease-out;
+        }
+        .msg-left {
+            align-self: flex-start;
+            background: #ffffff;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 4px 12px 12px 4px;
+        }
+        .msg-right {
+            align-self: flex-end;
+            background: #d4e8c8;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 12px 4px 4px 12px;
+        }
+
+        .msg .msg-name {
+            font-weight: bold;
+            font-size: 11px;
+            color: #0d3d7a;
+            margin-bottom: 2px;
+        }
+        .msg .msg-time {
+            font-size: 10px;
+            color: #7a6a5a;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* 特殊：网址消息 (XP风格链接) */
+        .msg-link {
+            background: #eef3f7 !important;
+            border-color: #6a9ec7 !important;
+            padding: 6px 14px !important;
+            cursor: pointer;
+            transition: background 0.1s;
+            text-align: center;
+        }
+        .msg-link:hover {
+            background: #dce6ef !important;
+        }
+        .msg-link:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a !important;
+        }
+        .msg-link .link-icon {
+            margin-right: 4px;
+        }
+        .msg-link .link-url {
+            color: #1a5a8c;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        /* 底部输入栏 (模拟) */
+        .chat-input {
+            background: #d4d0c8;
+            padding: 6px 12px;
+            border-top: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .chat-input input {
+            flex: 1;
+            background: white;
+            border: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-family: "Tahoma", sans-serif;
+            outline: none;
+        }
+        .chat-input input:focus {
+            border-color: #1a5a9e;
+        }
+        .chat-input button {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 4px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            background: #c0bdb6;
+        }
+        .chat-input button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #b5b0a8;
+            border-radius: 4px;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 自适应 */
+        @media (max-width: 420px) {
+            .xp-window {
+                height: 560px;
+            }
+            .msg {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            .chat-header .chat-with {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>✉️</span>
+            <span>迷雾论坛 · 私信</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 聊天头部 -->
+    <div class="chat-header">
+        <div class="chat-avatar">
+            <img id="headerAvatar" src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXPY1qVyzYYZX8UqW9sjgG9AUISlBV9AACFCQAAkvwwVYyortl-AzErz0E.jpg" alt="黑水村点子王">
+        </div>
+        <span class="chat-with">黑水村点子王</span>
+        <span class="chat-status">🟢 在线</span>
+    </div>
+
+    <!-- 消息区域 -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- 由 JS 动态生成 -->
+    </div>
+
+    <!-- 底部输入栏 (仅装饰) -->
+    <div class="chat-input">
+        <input type="text" placeholder="输入消息..." disabled>
+        <button disabled>发送</button>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        // ----- 头像 (对方) -----
+        const AVATAR_OTHER = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXPY1qVyzYYZX8UqW9sjgG9AUISlBV9AACFCQAAkvwwVYyortl-AzErz0E.jpg';
+        const MY_NAME = '我爱藤井風';
+        const OTHER_NAME = '黑水村点子王';
+
+        // ----- 聊天数据 (一周前) -----
+        const messages = [
+            { sender: 'other', text: '嘿，兄弟，我看到你在论坛上问黑水村的事了？' },
+            { sender: 'me', text: '啊，是的，我对那地方挺上心的，我问问。' },
+            { sender: 'other', text: '巧了，I have a plan，我就是这地方的原住民，这地方确实有点意思。' },
+            { sender: 'me', text: '哦？怎么说？是风景特别还是...？' },
+            { sender: 'other', text: '风景嘛，也就那样，荒山野岭的。不过村里有些老房子，看着挺有年头，而且...' },
+            { sender: 'other', text: '而且村里人对外人挺警惕的，你来了最好别多问。' },
+            { sender: 'me', text: '这么神秘？那我一个人去会不会有危险啊...' },
+            { sender: 'other', text: '不好说，但你要是真感兴趣，我这有个旅游网址，里面有些介绍和路线。' },
+            { sender: 'other', text: '你可以先看看，再做决定......' },
+            // 最后一条：网址链接 (点击跳转)
+            { sender: 'other', text: '黑水村旅游指南', isLink: true, url: 'Heishuicun.html' }
+        ];
+
+        // ----- DOM 元素 -----
+        const container = document.getElementById('chatMessages');
+        const toast = document.getElementById('toast');
+        let toastTimer = null;
+
+        // ----- Toast 提示 -----
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // ----- 渲染消息 -----
+        function renderMessages() {
+            container.innerHTML = '';
+            messages.forEach((msg, index) => {
+                const div = document.createElement('div');
+                div.className = 'msg';
+
+                if (msg.sender === 'me') {
+                    div.classList.add('msg-right');
+                } else {
+                    div.classList.add('msg-left');
+                }
+
+                // 如果是链接消息
+                if (msg.isLink) {
+                    div.classList.add('msg-link');
+                    div.innerHTML = `
+                        <span class="link-icon">🔗</span>
+                        <span class="link-url">${msg.text}</span>
+                        <div style="font-size:10px;color:#7a6a5a;margin-top:2px;">点击查看详细指南</div>
+                    `;
+                    // 点击跳转
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        window.location.href = msg.url;
+                    });
+                    div.style.cursor = 'pointer';
+                } else {
+                    // 普通消息
+                    const nameSpan = document.createElement('div');
+                    nameSpan.className = 'msg-name';
+                    nameSpan.textContent = msg.sender === 'me' ? MY_NAME : OTHER_NAME;
+                    div.appendChild(nameSpan);
+
+                    const textSpan = document.createElement('div');
+                    textSpan.textContent = msg.text;
+                    div.appendChild(textSpan);
+
+                    // 模拟时间 (一周前)
+                    const timeSpan = document.createElement('div');
+                    timeSpan.className = 'msg-time';
+                    const date = new Date();
+                    date.setDate(date.getDate() - 7);
+                    timeSpan.textContent = date.toLocaleString('zh-CN', { 
+                        month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' 
+                    });
+                    div.appendChild(timeSpan);
+                }
+
+                container.appendChild(div);
+            });
+
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ----- 初始化 -----
+        renderMessages();
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('重置聊天？')) {
+                renderMessages();
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('💬 聊天记录: 一周前 · 黑水村点子王');
+        console.log('🔗 最后一条为网址链接 → Heishuicun.html');
+    })();
+</script>
+</body>
+</html>

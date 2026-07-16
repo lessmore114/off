@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>迷雾论坛 · 通知中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #3a6ea5;
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .xp-window {
+            width: 100%;
+            max-width: 460px;
+            background: #d4d0c8;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .xp-titlebar {
+            background: linear-gradient(180deg, #1a5a9e 0%, #0d3d7a 100%);
+            color: white;
+            padding: 4px 8px 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid #0a2a4a;
+        }
+
+        .xp-titlebar .icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .xp-titlebar .controls {
+            display: flex;
+            gap: 4px;
+        }
+        .xp-titlebar .controls button {
+            background: #d4d0c8;
+            border: 1px solid #0a1a2a;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: #c0bdb6;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+        }
+        .xp-titlebar .controls button:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        .xp-body {
+            background: #d4d0c8;
+            padding: 16px 14px 20px;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            border-top: none;
+        }
+
+        /* 通知列表 */
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .notif-item {
+            background: #e8e4db;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .notif-item .notif-title {
+            font-weight: bold;
+            font-size: 12px;
+            color: #0d3d7a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notif-item .notif-content {
+            font-size: 13px;
+        }
+
+        .notif-item .notif-reason {
+            background: #d4d0c8;
+            padding: 2px 10px;
+            border: 1px solid #b5b0a8;
+            border-radius: 3px;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        .notif-item .notif-reason.hidden-reason {
+            background: #c8c4ba;
+            color: #5a4a3a;
+            letter-spacing: 2px;
+            font-family: "Tahoma", sans-serif;
+        }
+
+        .notif-item .notif-time {
+            font-size: 11px;
+            color: #7a6a5a;
+            margin-top: 6px;
+            border-top: 1px dashed #c5c0b8;
+            padding-top: 4px;
+        }
+
+        /* 底部按钮 */
+        .back-area {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .back-btn {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 6px 28px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            background: #c0bdb6;
+        }
+        .back-btn:active {
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f3ed;
+            border: 3px solid;
+            border-color: #f5f3ed #0a1a2a #0a1a2a #f5f3ed;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-family: "Tahoma", sans-serif;
+            color: #1a1a1a;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            z-index: 999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            background: #e8e4db;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeToast 0.2s ease-out;
+        }
+
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .xp-statusbar {
+            background: #d4d0c8;
+            border-top: 2px solid;
+            border-color: #0a1a2a #f5f3ed #f5f3ed #0a1a2a;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            font-family: "Tahoma", sans-serif;
+        }
+
+        .xp-statusbar .info {
+            display: flex;
+            gap: 16px;
+        }
+
+        @media (max-width: 420px) {
+            .notif-item {
+                padding: 12px 14px;
+                font-size: 12px;
+            }
+            .back-btn {
+                padding: 5px 20px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="xp-window">
+    <!-- 标题栏 -->
+    <div class="xp-titlebar">
+        <div class="icon">
+            <span>🔔</span>
+            <span>迷雾论坛 · 通知中心</span>
+        </div>
+        <div class="controls">
+            <button>—</button>
+            <button>□</button>
+            <button>✕</button>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="xp-body">
+        <div class="notif-list">
+            <!-- 通知1 -->
+            <div class="notif-item">
+                <div class="notif-title">
+                    <span>📕</span> 帖子被删除
+                </div>
+                <div class="notif-content">
+                    您的帖子：“有人知道黑水村的消息吗？” 已被删除，
+                    <span style="font-weight:bold;">原因为：</span>
+                    <span class="notif-reason hidden-reason">██████</span>
+                </div>
+                <div class="notif-time">🕒 2026-07-14 22:15</div>
+            </div>
+
+            <!-- 通知2 -->
+            <div class="notif-item">
+                <div class="notif-title">
+                    <span>⚠️</span> 账号功能受限
+                </div>
+                <div class="notif-content">
+                    您的账号已被禁用某些功能，
+                    <span style="font-weight:bold;">原因为：</span>
+                    <span class="notif-reason">[6Zq+6YGT5L2g5bqU6K+l57un57ut6L+Z5Luk5Lq66K6o5Y6M55qE5peF6YCU5ZCX77yf]</span>
+                </div>
+                <div class="notif-time">🕒 2026-07-15 08:30</div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="back-area">
+            <button class="back-btn" id="backBtn">← 返回用户中心</button>
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="xp-statusbar">
+        <span>🔔 通知: 2 条未读</span>
+        <div class="info">
+            <span>🟢 已登录</span>
+            <span>🕒 2026-07-15</span>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+    (function() {
+        const toast = document.getElementById('toast');
+        const backBtn = document.getElementById('backBtn');
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 2500);
+        }
+
+        // 返回按钮 → 跳转 yonghu.html
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'yonghu.html';
+        });
+
+        // 双击标题栏重置 (调试)
+        const titlebar = document.querySelector('.xp-titlebar');
+        titlebar.addEventListener('dblclick', function() {
+            if (confirm('刷新通知？')) {
+                showToast('🔄 已刷新');
+            }
+        });
+
+        console.log('📌 通知1: 帖子被删除 (原因隐藏)');
+        console.log('📌 通知2: 账号功能受限 (原因Base64)');
+        console.log('🔙 返回按钮 → yonghu.html');
+    })();
+</script>
+</body>
+</html>

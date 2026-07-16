@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 达齐的房间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .whisper {
+            color: #4a6a6a;
+            font-style: italic;
+        }
+
+        .story-text .dialogue {
+            color: #a0a08a;
+        }
+
+        .story-text .clue {
+            color: #8a8a5a;
+            font-weight: bold;
+        }
+
+        /* 密码输入区域 */
+        .puzzle-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .puzzle-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .input-row input {
+            background: #0a0f14;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            padding: 8px 14px;
+            font-size: 16px;
+            font-family: "Courier New", monospace;
+            color: #8ac4e4;
+            width: 180px;
+            text-align: center;
+            letter-spacing: 2px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-row input:focus {
+            border-color: #4a8ac4;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+        }
+
+        .input-row input::placeholder {
+            color: #3a3a3a;
+            letter-spacing: 1px;
+            font-size: 13px;
+        }
+
+        .input-row .submit-btn {
+            color: #4a8ac4;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            cursor: pointer;
+            padding: 6px 18px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .input-row .submit-btn:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+        }
+
+        .input-row .submit-btn:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .error-msg {
+            color: #7a4a4a;
+            font-size: 13px;
+            font-family: "Courier New", monospace;
+            min-height: 20px;
+            text-align: center;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 10px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .input-row input {
+                width: 140px;
+                font-size: 14px;
+                padding: 6px 10px;
+            }
+            .input-row .submit-btn {
+                font-size: 14px;
+                padding: 5px 14px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 达齐的房间 · 门前 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 黑水村 · 达齐的房间门前 ]</span>
+        </p>
+        <p>
+            两人沿着村道七拐八绕，终于来到了达齐的房间门前。
+            这栋房子孤零零地立在村子最偏僻的角落，周围长满了杂草，
+            看起来像是被刻意遗弃，却又分明有人居住的痕迹。
+        </p>
+        <p>
+            <span class="name">秋心</span> 忍不住低声吐槽：
+        </p>
+        <p>
+            <span class="dialogue">“什么人会把他妈的房子建在村子最偏僻的地方？</span><br>
+            <span class="dialogue">他是想在这进行什么研究吗？搞出什么类似弗兰肯斯坦的怪物？”</span>
+        </p>
+        <p>
+            <span class="name">宁无为</span> 瞪了他一眼，语气带着几分无奈：
+        </p>
+        <p>
+            <span class="dialogue">“你能闭嘴吗？表弟？至少让我们先专注一下，</span><br>
+            <span class="dialogue">至少现在还没那么糟糕......”</span>
+        </p>
+        <p>
+            <span class="dim">两人走到房门前，在确定没有人看见他们后，</span><br>
+            开始仔细查看门上的装置——一个老旧的<span class="clue">密码锁</span>。
+        </p>
+        <p>
+            锁的旁边贴着一张泛黄的纸条，上面写着：
+        </p>
+        <p style="color:#8a8a5a; font-style:italic; border-left: 2px solid #3a3a3a; padding-left: 14px; margin: 4px 0 10px 0;">
+            “5Yir5b+Y5LqG5oiR5Zyo5Yqo5oCB6YeM6Z2i5Y+R55qE54Wn54mH77yM54aK5aSn55qE55Sf5pel77yM6bqm5ZKW44CC”
+        </p>
+        <p>
+            <span class="name">秋心</span> 皱起眉头：
+        </p>
+        <p>
+            <span class="dialogue">“这他妈是什么东西......？”</span>
+        </p>
+        <p>
+            <span class="name">宁无为</span> 耸了耸肩：
+        </p>
+        <p>
+            <span class="dialogue">“我咋知道......难不成这两人是什么黑客吗？”</span>
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 密码似乎就在眼前，却又隔着一层迷雾。
+        </p>
+    </div>
+
+    <!-- 密码输入区域 -->
+    <div class="puzzle-area">
+        <span class="prompt">◆ 请输入密码 ◆</span>
+        <div class="input-row">
+            <input type="text" id="pwdInput" placeholder="输入密码..." autocomplete="off" maxlength="20">
+            <span class="submit-btn" id="submitBtn">➤ 确认</span>
+        </div>
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const CORRECT_PWD = '2012122';
+        const pwdInput = document.getElementById('pwdInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function attemptUnlock() {
+            const input = pwdInput.value.trim();
+            if (input === CORRECT_PWD) {
+                errorMsg.textContent = '';
+                errorMsg.style.color = '#4a8a4a';
+                errorMsg.textContent = '✅ 密码正确！门锁发出咔哒一声...';
+                submitBtn.textContent = '⏳ 正在进入...';
+                submitBtn.style.color = '#6a8a5a';
+                pwdInput.disabled = true;
+                submitBtn.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    window.location.href = 'daqi2.html';
+                }, 800);
+            } else {
+                errorMsg.textContent = '❌ 密码错误，再想想...';
+                errorMsg.style.color = '#7a4a4a';
+                pwdInput.value = '';
+                pwdInput.focus();
+                // 抖动反馈 (简单)
+                pwdInput.style.borderColor = '#7a3a3a';
+                setTimeout(() => {
+                    pwdInput.style.borderColor = '#1a2a3a';
+                }, 400);
+            }
+        }
+
+        // 点击提交
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            attemptUnlock();
+        });
+
+        // 回车提交
+        pwdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                attemptUnlock();
+            }
+        });
+
+        // 自动聚焦
+        setTimeout(() => {
+            pwdInput.focus();
+        }, 400);
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🔒 daqi.html 加载完成 · 密码锁');
+        console.log('📝 提示: 熊大的生日 (动态照片)');
+        console.log('🔑 正确密码: 2012122');
+        console.log('🔜 解锁后 → daqi2.html');
+    })();
+</script>
+</body>
+</html>

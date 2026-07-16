@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>黑水村 · 达齐的房间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: "Courier New", "Lucida Console", monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+            margin: 0;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 680px;
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 28px 30px 32px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            min-height: 460px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #3a3a3a;
+            letter-spacing: 6px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+            font-family: "Courier New", monospace;
+            text-transform: uppercase;
+        }
+        .game-title .highlight {
+            color: #5a4a3a;
+        }
+
+        .story-text {
+            color: #b0b0b0;
+            font-size: 15px;
+            line-height: 1.9;
+            font-family: "Courier New", "Lucida Console", monospace;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            text-indent: 0;
+        }
+
+        .story-text .dim {
+            color: #5a5a5a;
+            font-style: italic;
+        }
+
+        .story-text .evil {
+            color: #7a4a4a;
+            font-weight: bold;
+        }
+
+        .story-text .name {
+            color: #8a7a5a;
+            font-weight: bold;
+        }
+
+        .story-text .tense {
+            color: #8a6a4a;
+            font-weight: bold;
+        }
+
+        .story-text .dialogue {
+            color: #a0a08a;
+        }
+
+        .story-text .shock {
+            color: #8a5a3a;
+            font-weight: bold;
+        }
+
+        .story-text .discovery {
+            color: #7a7a5a;
+        }
+
+        /* 选项区域 */
+        .choice-area {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-area .prompt {
+            color: #4a4a4a;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-family: "Courier New", monospace;
+            margin-bottom: 2px;
+        }
+
+        .choice-link {
+            color: #4a8ac4;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 6px 24px;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            background: #0a0f14;
+            transition: all 0.2s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(74, 138, 196, 0.2);
+        }
+
+        .choice-link:hover {
+            color: #6aaae4;
+            border-color: #2a4a6a;
+            background: #0f1a24;
+            box-shadow: 0 0 20px rgba(74, 138, 196, 0.1);
+            text-shadow: 0 0 20px rgba(74, 138, 196, 0.3);
+        }
+
+        .choice-link:active {
+            color: #2a6a9a;
+            border-color: #0a2a4a;
+            transform: scale(0.97);
+        }
+
+        .choice-link .arrow {
+            color: #4a6a4a;
+            margin-right: 6px;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: #3a5a3a;
+            animation: blink 1.2s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .terminal-hint {
+            color: #2a2a2a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
+            font-family: "Courier New", monospace;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 18px 16px 22px;
+            }
+            .story-text {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+            .choice-link {
+                font-size: 16px;
+                padding: 5px 18px;
+            }
+            .game-title {
+                font-size: 13px;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 标题 -->
+    <div class="game-title">
+        <span class="highlight">◆</span> 达齐的房间 · 内部 <span class="highlight">◆</span>
+    </div>
+
+    <!-- 故事文本 -->
+    <div class="story-text">
+        <p>
+            <span class="dim">[ 黑水村 · 达齐房间内 ]</span>
+        </p>
+        <p>
+            <span class="tense">吱呀——</span> 门被缓缓推开。
+            两人屏住呼吸，踏入了那间偏僻的屋子。
+        </p>
+        <p>
+            屋内的景象让他们瞬间愣住了。
+        </p>
+        <p>
+            <span class="discovery">墙壁上挂满了各式各样的装扮——</span><br>
+            惨白的面具、破烂的长袍、尖利的指甲套、还有那些……<span class="evil">模仿鬼怪的道具</span>。
+            在昏暗中，它们仿佛随时会活过来。
+        </p>
+        <p>
+            而在屋子的角落，<span class="shock">香火和纸钱</span>堆叠在一起，
+            有些已经烧过，灰烬散落在地上，散发出淡淡的焦糊味。
+        </p>
+        <p>
+            <span class="name">秋心</span> 环顾四周，声音带着明显的不安：
+        </p>
+        <p>
+            <span class="dialogue">“越看我越觉得渗人，差不多了吧。”</span>
+        </p>
+        <p>
+            <span class="name">宁无为</span> 默默掏出手机，快速拍了几张照片，
+            然后点了点头，低声说道：
+        </p>
+        <p>
+            <span class="dialogue">“走。”</span>
+        </p>
+        <p>
+            <span class="dim">两人退出房间，轻轻带上了门。</span>
+        </p>
+        <p>
+            <span class="tense">咔嗒——</span>
+        </p>
+        <p>
+            几乎是同时，门锁自动锁上了。
+        </p>
+        <p>
+            <span class="name">秋心</span> 猛地回头，瞳孔紧缩：
+        </p>
+        <p>
+            <span class="dialogue evil">“？！”</span>
+        </p>
+        <p>
+            <span class="dim">两人没有再多说一句话，默契地绕路从河边回到了村子的中心。</span>
+        </p>
+        <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
+            —— 香火、纸钱、鬼怪装扮……这间屋子里藏着的，远比想象中更多。
+        </p>
+    </div>
+
+    <!-- 选项区域 -->
+    <div class="choice-area">
+        <span class="prompt">◆ 你的选择 ◆</span>
+        <a class="choice-link" id="eatBtn"><span class="arrow"></span> 时间流逝，来到夜晚。</a>
+    </div>
+
+    <!-- 终端提示 -->
+    <div class="terminal-hint">
+        <span class="cursor-blink"></span> 等待输入...
+    </div>
+</div>
+
+<script>
+    (function() {
+        const eatBtn = document.getElementById('eatBtn');
+
+        // 点击“时间流逝，来到夜晚” → 跳转 Night.html
+        eatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.style.color = '#8ac4e4';
+            setTimeout(() => {
+                window.location.href = 'Night.html';
+            }, 200);
+        });
+
+        // 键盘 Enter 触发
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                eatBtn.click();
+            }
+        });
+
+        // 双击标题重置 (调试)
+        const titleEl = document.querySelector('.game-title');
+        titleEl.addEventListener('dblclick', function() {
+            if (confirm('重置页面？')) {
+                location.reload();
+            }
+        });
+
+        console.log('🏚️ daqi3.html 加载完成 · 房间内部探索');
+        console.log('🎭 发现大量鬼怪装扮 + 香火纸钱');
+        console.log('🔒 离开后门锁自动锁上');
+        console.log('选项:时间流逝，来到夜晚  → Night.html');
+        console.log('⌨️ 快捷键: [Enter] 或 [Space]');
+    })();
+</script>
+</body>
+</html>
