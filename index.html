@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QQ聊天模拟 · sinner & loveless</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #d6d8db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        /* 手机框 */
+        .phone {
+            width: 100%;
+            max-width: 380px;
+            height: 740px;
+            background: #f0f0f2;
+            border-radius: 38px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 状态栏 + 标题 */
+        .status-bar {
+            padding: 10px 18px 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e1e1e;
+            background: #f0f0f2;
+            flex-shrink: 0;
+        }
+
+        .chat-header {
+            padding: 8px 16px 10px;
+            background: #f0f0f2;
+            border-bottom: 1px solid #d9d9d9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 22px;
+            font-weight: 300;
+            color: #333;
+            cursor: default;
+            line-height: 1;
+        }
+
+        .chat-title {
+            flex: 1;
+            font-size: 17px;
+            font-weight: 500;
+            text-align: center;
+            margin-right: 24px;
+            letter-spacing: 0.3px;
+        }
+        .chat-title small {
+            font-size: 12px;
+            font-weight: 400;
+            color: #888;
+        }
+
+        /* 消息容器 */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: #f0f0f2;
+        }
+
+        /* 消息行 */
+        .msg-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            max-width: 88%;
+            animation: msgIn 0.25s ease-out;
+        }
+        .msg-row.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        /* 头像 */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: #ccc;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        .avatar-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: #222;
+            background: #e0e0e0;
+        }
+
+        /* 气泡 */
+        .bubble {
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        /* loveless 白色 */
+        .msg-row:not(.right) .bubble {
+            background: #ffffff;
+            border-top-left-radius: 4px;
+            color: #1a1a1a;
+        }
+        /* .sinner 绿色 */
+        .msg-row.right .bubble {
+            background: #b2e281;
+            border-top-right-radius: 4px;
+            color: #1a1a1a;
+        }
+
+        /* 地址特殊样式 */
+        .bubble.address {
+            background: #ffffff !important;
+            border: 1.5px dashed #ff8c00;
+            color: #d96c00;
+            font-weight: 500;
+            text-align: center;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .msg-row.right .bubble.address {
+            border-radius: 18px 4px 18px 18px;
+        }
+
+        /* 底部按钮 */
+        .bottom-area {
+            padding: 14px 16px 20px;
+            background: #f0f0f2;
+            border-top: 1px solid #d9d9d9;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .game-btn {
+            display: inline-block;
+            background: #03a9f4;
+            color: white;
+            border: none;
+            padding: 10px 34px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 5px 12px rgba(3, 169, 244, 0.35);
+            cursor: pointer;
+            transition: 0.2s;
+            opacity: 0.5;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+        }
+        .game-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .game-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 6px rgba(3, 169, 244, 0.3);
+        }
+
+        @keyframes msgIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 3px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="phone">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>9:41</span>
+        <span>🔋 100%</span>
+    </div>
+    <!-- 标题 -->
+    <div class="chat-header">
+        <span class="back-btn">‹</span>
+        <div class="chat-title">loveless <small>(对方)</small></div>
+        <span style="font-size:20px; opacity:0.6;">⋯</span>
+    </div>
+
+    <!-- 消息区域 -->
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-area">
+        <button class="game-btn" id="gameBtn">🎮 点击开始游戏</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 用户头像（已嵌入你提供的链接） -----
+        const AVATAR_SINNER = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEW_WRqUUYnETMRAAHJJ9QZ7FC_UHsIoIkAAg8vAAILw4hWaSBW0drSGjo8BA.jpg';
+        const AVATAR_LOVELESS = 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEXO41qVxZKVP0bOyfKK2CMia-kLsMw8gACBisAAkvwuVbF8wxCbK6awD0E.jpg';
+
+        // ----- 对话数据 (按顺序) -----
+        const dialog = [
+            { sender: 'sinner', text: '表哥，你不是说要带我去吃香的喝辣的吗，你人呢' },
+            { sender: 'loveless', text: '别急，你来我店里吧，我先给你整点东西吃，行不行？' },
+            { sender: 'sinner', text: '我去表哥，我又没钱吃饭了，赶紧扫三十块过来给我搞碗猪脚饭行不行啊' },
+            { sender: 'loveless', text: '你吃不吃？不吃滚' },
+            { sender: 'sinner', text: '你发地址吧，我现在过去' },
+            { sender: 'loveless', text: '正宗印度成吉思鸡', isAddress: true }
+        ];
+
+        const container = document.getElementById('chatMessages');
+        const gameBtn = document.getElementById('gameBtn');
+
+        let currentIdx = 0;
+        let isComplete = false;
+        let timer = null;
+
+        // ----- 生成消息 DOM -----
+        function buildMessage(msg) {
+            const row = document.createElement('div');
+            row.className = 'msg-row';
+
+            const isSinner = (msg.sender === 'sinner');
+            if (isSinner) row.classList.add('right');
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'avatar';
+            const img = document.createElement('img');
+            img.src = isSinner ? AVATAR_SINNER : AVATAR_LOVELESS;
+            img.alt = isSinner ? '.sinner' : 'loveless';
+            img.onerror = function() {
+                this.style.display = 'none';
+                const fallback = document.createElement('span');
+                fallback.textContent = isSinner ? '.S' : 'L';
+                fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:600;font-size:18px;background:#e0e0e0;color:#333;';
+                avatarDiv.appendChild(fallback);
+            };
+            avatarDiv.appendChild(img);
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            if (msg.isAddress) {
+                bubble.classList.add('address');
+            }
+            bubble.textContent = msg.text;
+
+            row.appendChild(avatarDiv);
+            row.appendChild(bubble);
+            return row;
+        }
+
+        // ----- 显示下一条 (点击触发) -----
+        function showNext() {
+            if (isComplete || timer) return;
+            if (currentIdx >= dialog.length) {
+                isComplete = true;
+                gameBtn.classList.add('active');
+                gameBtn.textContent = '🎮 点击开始游戏';
+                return;
+            }
+
+            const msg = dialog[currentIdx];
+            const el = buildMessage(msg);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < dialog.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 300);
+            } else {
+                setTimeout(() => {
+                    isComplete = true;
+                    gameBtn.classList.add('active');
+                    gameBtn.textContent = '🎮 点击开始游戏';
+                }, 400);
+            }
+        }
+
+        // ----- 绑定点击事件 (点击消息区域触发下一条) -----
+        container.addEventListener('click', function(e) {
+            if (isComplete) return;
+            showNext();
+        });
+
+        // ----- 游戏按钮：跳转到 shop.html -----
+        gameBtn.addEventListener('click', function() {
+            if (!this.classList.contains('active')) return;
+            // 跳转到 shop.html (同一目录下)
+            window.location.href = 'shop.html';
+        });
+
+        // ----- 初始化：自动显示第一条，后续点击显示 -----
+        function initChat() {
+            container.innerHTML = '';
+            currentIdx = 0;
+            isComplete = false;
+            gameBtn.classList.remove('active');
+            gameBtn.textContent = '🎮 点击开始游戏';
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            // 自动显示第一条
+            setTimeout(() => {
+                if (dialog.length > 0) {
+                    const first = dialog[0];
+                    const el = buildMessage(first);
+                    container.appendChild(el);
+                    currentIdx = 1;
+                    container.scrollTop = container.scrollHeight;
+                    if (currentIdx >= dialog.length) {
+                        isComplete = true;
+                        gameBtn.classList.add('active');
+                        gameBtn.textContent = '🎮 点击开始游戏';
+                    }
+                }
+            }, 200);
+        }
+
+        // 覆盖 showNext 以支持从第二条开始点击
+        const originalShowNext = showNext;
+        showNext = function() {
+            if (isComplete || timer) return;
+            if (currentIdx >= dialog.length) {
+                isComplete = true;
+                gameBtn.classList.add('active');
+                gameBtn.textContent = '🎮 点击开始游戏';
+                return;
+            }
+            const msg = dialog[currentIdx];
+            const el = buildMessage(msg);
+            container.appendChild(el);
+            currentIdx++;
+            container.scrollTop = container.scrollHeight;
+
+            if (currentIdx < dialog.length) {
+                timer = setTimeout(() => {
+                    timer = null;
+                }, 280);
+            } else {
+                setTimeout(() => {
+                    isComplete = true;
+                    gameBtn.classList.add('active');
+                    gameBtn.textContent = '🎮 点击开始游戏';
+                }, 400);
+            }
+        };
+
+        // 重新绑定事件
+        container.removeEventListener('click', showNext);
+        container.addEventListener('click', function(e) {
+            if (isComplete) return;
+            showNext();
+        });
+
+        // 启动
+        initChat();
+
+        // 双击重置（调试用）
+        container.addEventListener('dblclick', function() {
+            if (confirm('重置对话？')) {
+                initChat();
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>
