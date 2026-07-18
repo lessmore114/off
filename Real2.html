@@ -240,27 +240,23 @@
             一时间竟说不出话来。
         </p>
         <p>
-            几秒后，<span class="name">秋心</span> 像是想到了什么，
-            缓缓从口袋里拿出了手机。
+            沉默持续了许久。
         </p>
         <p>
-            <span class="action">他按下了三个数字——</span>
-        </p>
-        <p style="color:#8a4a3a; font-size:1.1em; font-weight:bold; text-align:center; letter-spacing:4px; margin: 8px 0;">
-            · 1 · 1 · 0 ·
+            最终，<span class="name">宁无为</span> 缓缓开口，声音沙哑而低沉：
         </p>
         <p>
-            <span class="action">拨打了报警电话。</span>
+            <span class="dialogue">“……带我们去看看他的遗体。”</span>
         </p>
         <p style="color:#5a5a5a; font-style:italic; margin-top:6px;">
-            —— 闹剧结束了，但代价，却是一条人命。
+            —— 真相已经揭开，但伤痛才刚刚开始。
         </p>
     </div>
 
     <!-- 选项区域 -->
     <div class="choice-area">
         <span class="prompt">◆ 你的选择 ◆</span>
-        <a class="choice-link" id="nextBtn"><span class="arrow">➤</span> 接下来的事情</a>
+        <a class="choice-link" id="nextBtn"><span class="arrow">➤</span> 往前走</a>
     </div>
 
     <!-- 终端提示 -->
@@ -273,12 +269,12 @@
     (function() {
         const nextBtn = document.getElementById('nextBtn');
 
-        // 点击“接下来的事情” → 跳转 Theend2.html
+        // 点击“往前走” → 跳转 Dead.html
         nextBtn.addEventListener('click', function(e) {
             e.preventDefault();
             this.style.color = '#8ac4e4';
             setTimeout(() => {
-                window.location.href = 'Theend2.html';
+                window.location.href = 'Dead.html';
             }, 200);
         });
 
@@ -300,8 +296,8 @@
 
         console.log('🔍 Real2.html 加载完成 · 最后的真相');
         console.log('😱 梅佳琦被吓死 —— 达齐和麦咖的意外');
-        console.log('📞 秋心拨打了 110');
-        console.log('🔵 选项: 接下来的事情 → Theend2.html');
+        console.log('💀 宁无为提出查看遗体');
+        console.log('🔵 选项: 往前走 → Dead.html');
         console.log('⌨️ 快捷键: [Enter] 或 [Space]');
     })();
 </script>
